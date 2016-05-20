@@ -1,0 +1,24 @@
+{
+  "name": "openstack-lib",
+  "version": "0.0.1",
+  "description": "JavaScript API library for OpenStack.",
+  "main": "index.js",
+  "scripts": {
+    "test": "exit 0",
+    "lint": "eslint ./"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://git.openstack.org/openstack/js-openstack-lib"
+  },
+  "keywords": [
+    "openstack"
+  ],
+  "author": "OpenStack <openstack-dev@lists.openstack.org>",
+  "license": "Apache-2.0",
+  "homepage": "http://www.openstack.org/",
+  "dependencies": {
+    "eslint": "^1.5.1",
+    "eslint-config-openstack": "^1.2.4"
+  }
+}
