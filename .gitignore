@@ -36,3 +36,6 @@ bower_components
 
 # OS-specific
 .DS_Store
+
+# Doc build
+doc/build
