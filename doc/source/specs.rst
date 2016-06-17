@@ -33,6 +33,8 @@ permits.
    :glob:
    :maxdepth: 1
 
+   specs/devstack
+
 
 Implemented Specifications
 ==========================
