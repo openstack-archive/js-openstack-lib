@@ -1,0 +1,6 @@
+dist
+.npm
+node_modules
+npm-debug.log
+package
+doc

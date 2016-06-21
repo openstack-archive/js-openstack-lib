@@ -1,1 +1,4 @@
 extends: openstack
+
+parserOptions:
+  ecmaVersion: 6

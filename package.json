@@ -17,8 +17,8 @@
   "author": "OpenStack <openstack-dev@lists.openstack.org>",
   "license": "Apache-2.0",
   "homepage": "http://www.openstack.org/",
-  "dependencies": {
-    "eslint": "^1.5.1",
-    "eslint-config-openstack": "^1.2.4"
+  "devDependencies": {
+    "eslint": "^2.4.0",
+    "eslint-config-openstack": "2.0.0"
   }
 }
