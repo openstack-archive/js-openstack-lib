@@ -34,6 +34,7 @@ permits.
    :maxdepth: 1
 
    specs/devstack
+   specs/es2015.rst
 
 
 Implemented Specifications
