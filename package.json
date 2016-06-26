@@ -4,8 +4,7 @@
   "description": "JavaScript API library for OpenStack.",
   "main": "dist/index.js",
   "scripts": {
-    "pretest": "npm run build",
-    "test": "exit 0",
+    "test": "jasmine JASMINE_CONFIG_PATH=test/unit/jasmine.json",
     "lint": "eslint ./",
     "prepublish": "nsp check; npm run build",
     "build": "babel src -d dist",
@@ -32,6 +31,7 @@
     "babel-register": "^6.9.0",
     "eslint": "^2.4.0",
     "eslint-config-openstack": "2.0.0",
+    "jasmine": "^2.4.1",
     "nsp": "^2.4.0"
   },
   "files": [
