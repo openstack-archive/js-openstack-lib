@@ -1,0 +1,30 @@
+verbose: false
+instrumentation:
+    root: .
+    includes:
+    - 'src/**'
+    default-excludes: true
+reporting:
+    print: detail
+    reports:
+        - lcov
+        - html
+    dir: ./cover/node
+    watermarks:
+        statements: [50, 90]
+        lines: [50, 90]
+        functions: [50, 90]
+        branches: [50, 90]
+check:
+    global:
+        statements: 50
+        lines: 50
+        branches: 50
+        functions: 0
+        excludes: []
+    each:
+        statements: 50
+        lines: 50
+        branches: 50
+        functions: 0
+        excludes: []

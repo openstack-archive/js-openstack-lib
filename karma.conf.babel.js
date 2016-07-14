@@ -27,7 +27,7 @@ export default (config) => {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress'],
+    reporters: ['progress', 'coverage', 'threshold'],
 
     // web server port
     port: 9876,
@@ -59,6 +59,20 @@ export default (config) => {
     webpackMiddleware: {
       // Don't spam the console.
       noInfo: true
+    },
+
+    // Generate a coverage report in /cover/karma
+    coverageReporter: {
+      type: 'html', //produces a html document after code is run
+      dir: 'cover/browser/' //path to created html doc
+    },
+
+    // The current coverage threshold values. These should never drop.
+    thresholdReporter: {
+      statements: 88,
+      branches: 64,
+      functions: 77,
+      lines: 75
     }
 
   });
