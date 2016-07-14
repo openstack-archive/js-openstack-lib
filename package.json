@@ -4,7 +4,9 @@
   "description": "JavaScript API library for OpenStack.",
   "main": "dist/index.js",
   "scripts": {
-    "test": "jasmine JASMINE_CONFIG_PATH=test/unit/jasmine.json",
+    "test": "npm run test:node; npm run test:browser",
+    "test:node": "jasmine JASMINE_CONFIG_PATH=test/unit/jasmine.json",
+    "test:browser": "karma start",
     "lint": "eslint ./",
     "prepublish": "nsp check; npm run build",
     "build": "babel src -d dist && webpack",
@@ -33,6 +35,11 @@
     "eslint": "^2.4.0",
     "eslint-config-openstack": "2.0.0",
     "jasmine": "^2.4.1",
+    "karma": "^1.1.1",
+    "karma-chrome-launcher": "^1.0.1",
+    "karma-firefox-launcher": "^1.0.0",
+    "karma-jasmine": "^1.0.2",
+    "karma-webpack": "^1.7.0",
     "nsp": "^2.4.0",
     "webpack": "^1.13.1"
   },
