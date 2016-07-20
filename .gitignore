@@ -19,6 +19,7 @@ reports
 package
 dist
 www
+*.tgz
 
 # Dependency directories
 node_modules
