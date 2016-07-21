@@ -1,10 +1,14 @@
 import webpackConfig from './webpack.config.babel';
+import path from 'path';
 
 export default (config) => {
+  // test mode based on basePath parameter (eg. test/unit, test/functional)
+  const testDir = config.basePath ? path.basename(config.basePath) : 'unit';
+
   config.set({
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
-    basePath: '',
+    basePath: 'test/' + testDir,
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
@@ -12,16 +16,18 @@ export default (config) => {
 
     // list of files / patterns to load in the browser
     files: [
-      'test/unit/**/*.js'
+      '**/*.js'
     ],
 
     // list of files to exclude
-    exclude: [],
+    exclude: [
+      'helpers/**/*.js'
+    ],
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'test/unit/**/*.js': ['webpack']
+      '**/*.js': ['webpack']
     },
 
     // test results reporter to use
@@ -64,7 +70,7 @@ export default (config) => {
     // Generate a coverage report in /cover/karma
     coverageReporter: {
       type: 'html', //produces a html document after code is run
-      dir: 'cover/browser/' //path to created html doc
+      dir: '../../cover/' + testDir + '/browser/' //path to created html doc
     },
 
     // The current coverage threshold values. These should never drop.

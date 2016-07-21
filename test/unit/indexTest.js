@@ -1,4 +1,4 @@
-import Test from "../../src/index.js";
+import Test from "../../src/index";
 
 const FetchMock = require('fetch-mock');
 

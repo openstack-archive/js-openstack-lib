@@ -1,3 +1,6 @@
+import webpack from 'webpack';
+import cloudsYamlPath from './test/functional/helpers/cloudsYamlPath';
+
 export default {
   entry: ['./src/index.js'],
   output: {
@@ -11,8 +14,15 @@ export default {
       {
         test: /\.js$/,
         loader: 'babel',
-        exclude: /node_modules/
+        exclude: /node_modules/,
+        query: {
+          plugins: ['transform-inline-environment-variables']
+        }
       }
     ]
-  }
+  },
+  plugins: [
+    new webpack.NormalModuleReplacementPlugin(/helpers\/cloudsConfig/,
+      'json!yaml!' + cloudsYamlPath)
+  ]
 };
