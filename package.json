@@ -25,7 +25,8 @@
   "homepage": "http://www.openstack.org/",
   "dependencies": {
     "babel-polyfill": "^6.9.1",
-    "loglevel": "^1.4.1"
+    "loglevel": "^1.4.1",
+    "node-fetch": "^1.5.3"
   },
   "devDependencies": {
     "babel-cli": "^6.10.1",
