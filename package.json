@@ -11,7 +11,7 @@
     "lint": "eslint ./",
     "prepublish": "nsp check; npm run build",
     "build": "babel src -d dist && webpack",
-    "doc": "(cd ./doc && make html)"
+    "docs": "(cd ./doc && make html)"
   },
   "repository": {
     "type": "git",
