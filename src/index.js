@@ -1,5 +1,5 @@
 import 'babel-polyfill';
-import fetch from 'node-fetch';
+import fetch from 'isomorphic-fetch';
 import log from 'loglevel';
 
 log.setLevel('INFO');
