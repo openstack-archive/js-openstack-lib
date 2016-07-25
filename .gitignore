@@ -20,6 +20,7 @@ package
 dist
 www
 *.tgz
+.vagrant
 
 # Dependency directories
 node_modules
