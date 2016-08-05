@@ -4,6 +4,7 @@
   "description": "JavaScript API library for OpenStack.",
   "main": "dist/index.js",
   "scripts": {
+    "configure-devstack": "babel-node ./configure-devstack.js",
     "test": "npm run test:node; npm run test:browser",
     "test:node": "istanbul cover jasmine JASMINE_CONFIG_PATH=test/unit/jasmine.json",
     "test:browser": "karma start",
