@@ -7,15 +7,12 @@ describe('Openstack connection test', () => {
     expect(keystone).toBeDefined();
   });
 
-  it('should throw an error for an unknown cloud', () => {
-    const cloudsConfig = aCloudsConfig('cloud1');
-    const cloudName = 'cloud2';
-
+  it('should throw an error for an empty config', () => {
     try {
-      const keystone = new Keystone(cloudsConfig, cloudName);
+      const keystone = new Keystone();
       keystone.authenticate();
     } catch (e) {
-      expect(e.message).toEqual('Config for this cloud not found');
+      expect(e.message).toEqual('A configuration is required.');
     }
   });
 
@@ -23,8 +20,6 @@ describe('Openstack connection test', () => {
     const cloudsConfig = aCloudsConfig('cloud1');
 
     const authUrl = cloudsConfig.clouds.cloud1.auth.auth_url;
-
-    const cloudName = 'cloud1';
 
     fetchMock
       .post(authUrl, {
@@ -38,7 +33,7 @@ describe('Openstack connection test', () => {
         }
       });
 
-    const keystone = new Keystone(cloudsConfig, cloudName);
+    const keystone = new Keystone(cloudsConfig.clouds.cloud1);
 
     keystone.authenticate()
       .then(() => {

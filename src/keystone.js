@@ -5,13 +5,14 @@ log.setLevel('INFO');
 
 export default class Keystone {
 
-  constructor(cloudsConfig, cloudName) {
-    if (cloudsConfig.clouds.hasOwnProperty(cloudName)) {
-      this.cloudConfig = cloudsConfig.clouds[cloudName];
-    } else {
-      throw new Error('Config for this cloud not found');
+  constructor(cloudConfig) {
+    // Sanity checks.
+    if (!cloudConfig) {
+      throw new Error('A configuration is required.');
     }
-
+    // Clone the config, so that this instance is immutable
+    // at runtime (no modifying the config after the fact).
+    this.cloudConfig = Object.assign({}, cloudConfig);
   }
 
   authenticate() {
