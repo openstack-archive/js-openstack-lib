@@ -12,7 +12,7 @@ function fileExists(path) {
   try {
     fs.statSync(path);
     return true;
-  } catch(err) {
+  } catch (err) {
     return false;
   }
 }
