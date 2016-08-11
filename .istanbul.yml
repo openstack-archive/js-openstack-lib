@@ -2,7 +2,7 @@ verbose: false
 instrumentation:
     root: .
     includes:
-    - 'src/**'
+    - 'src/**/*'
     default-excludes: true
 reporting:
     print: detail
