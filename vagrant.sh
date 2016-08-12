@@ -28,9 +28,10 @@ EOL
 
 # Add some other settings.
 cat >/devstack/local.conf <<EOL
-[localrc]
+[[local|localrc]]
 HOST_IP=192.168.99.99
-SERVICE_HOST=$HOST_IP
+SERVICE_HOST=192.168.99.99
+RECLONE=True
 
 #CINDER_BRANCH=milestone-proposed
 #GLANCE_BRANCH=milestone-proposed
