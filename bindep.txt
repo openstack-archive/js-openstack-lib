@@ -29,6 +29,7 @@ python-dev [platform:dpkg]
 python-devel [platform:rpm]
 python-libvirt [platform:dpkg]
 python-lxml
+python-sphinx [platform:dpkg]
 python3-all-dev [platform:ubuntu-trusty]
 python3-dev [platform:dpkg]
 python3-devel [platform:fedora]
