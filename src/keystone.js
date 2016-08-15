@@ -1,11 +1,11 @@
-import 'isomorphic-fetch';
 import log from 'loglevel';
+import Http from './util/http';
 
 log.setLevel('INFO');
 
 export default class Keystone {
 
-  constructor(cloudConfig) {
+  constructor (cloudConfig) {
     // Sanity checks.
     if (!cloudConfig) {
       throw new Error('A configuration is required.');
@@ -13,12 +13,10 @@ export default class Keystone {
     // Clone the config, so that this instance is immutable
     // at runtime (no modifying the config after the fact).
     this.cloudConfig = Object.assign({}, cloudConfig);
+    this.http = new Http();
   }
 
   authenticate() {
-    const headers = {
-      'Content-Type': 'application/json'
-    };
     const body = {
       auth: {
         identity: {
@@ -32,13 +30,8 @@ export default class Keystone {
         }
       }
     };
-    const init = {
-      method: 'POST',
-      headers: headers,
-      body: JSON.stringify(body)
-    };
 
-    return fetch(this.cloudConfig.auth.auth_url, init)
+    return this.http.httpPost(this.cloudConfig.auth.auth_url, body)
       .then((res) => {
         this.token = res.headers.get('X-Subject-Token');
         return res.json(); // This returns a promise...

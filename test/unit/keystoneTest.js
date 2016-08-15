@@ -60,7 +60,7 @@ describe('Openstack connection test', () => {
         username: 'user',
         password: 'pass',
         project_name: 'js-openstack-lib',
-        auth_url: 'http://keystone'
+        auth_url: 'http://keystone/'
       }
     };
 
