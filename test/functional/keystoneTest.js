@@ -32,4 +32,35 @@ describe("Keystone", () => {
         .catch((error) => done.fail(error));
     });
   });
+
+  describe("version()", () => {
+
+    const supportedApiVersions = [
+      new Version('identity 3.7')
+    ];
+
+    /**
+     * This test acts as a canary, to inform the SDK developers that the Keystone API
+     * has changed in a significant way.
+     */
+    it("should return a supported version.", (done) => {
+      keystone.version()
+        .then((version) => {
+
+          // Quick sanity check.
+          const apiVersion = new Version('identity', version.id);
+
+          for (let i = 0; i < supportedApiVersions.length; i++) {
+            let supportedVersion = supportedApiVersions[i];
+            if (apiVersion.equals(supportedVersion)) {
+              done();
+              return;
+            }
+          }
+          fail("Current devstack keystone version is not supported.");
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+  });
 });

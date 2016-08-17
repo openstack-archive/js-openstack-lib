@@ -85,4 +85,55 @@ describe('Keystone', () => {
         .catch((error) => done.fail(error));
     });
   });
+
+  describe("version()", () => {
+
+    it("Should return a supported version of the keystone API.", (done) => {
+      const keystone = new Keystone(mockData.config);
+
+      fetchMock.mock(mockData.root());
+
+      keystone.version()
+        .then((version) => {
+          expect(version.id).toEqual('v3.7');
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+
+    it("Should throw an exception if no supported version is found.", (done) => {
+      const keystone = new Keystone(mockData.config);
+
+      // Build an invalid mock object.
+      const mockOptions = mockData.root();
+      mockOptions.response.versions.values.shift();
+
+      fetchMock.mock(mockOptions);
+
+      keystone.version()
+        .then((response) => done.fail(response))
+        .catch((error) => {
+          expect(error).not.toBeNull();
+          done();
+        });
+    });
+
+    it("Should NOT cache its results", (done) => {
+      const keystone = new Keystone(mockData.config);
+      const mockOptions = mockData.root();
+      fetchMock.mock(mockOptions);
+
+      keystone.version()
+        .then(() => {
+          // Validate that the mock has only been invoked once
+          expect(fetchMock.calls(mockOptions.name).length).toEqual(1);
+          return keystone.version();
+        })
+        .then(() => {
+          expect(fetchMock.calls(mockOptions.name).length).toEqual(2);
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+  });
 });

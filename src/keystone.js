@@ -1,5 +1,14 @@
 import Http from './util/http';
 
+/**
+ * A list of all supported versions. Please keep this array sorted by most recent.
+ *
+ * @type {Array} An array of version instances.
+ */
+const supportedKeystoneVersions = [
+  'v3.7'
+];
+
 export default class Keystone {
 
   constructor (cloudConfig) {
@@ -24,6 +33,25 @@ export default class Keystone {
       .then((response) => response.json())
       .then((body) => {
         return body.versions.values;
+      });
+  }
+
+  /**
+   * Retrieve the API version declaration that is currently in use by this keystone
+   * instance.
+   *
+   * @returns {Promise.<T>} A promise that will resolve with the specific API version.
+   */
+  version () {
+    return this
+      .versions()
+      .then((versions) => {
+        for (let version of versions) {
+          if (supportedKeystoneVersions.indexOf(version.id) > -1) {
+            return version;
+          }
+        }
+        throw new Error("No supported Keystone API version available.");
       });
   }
 
