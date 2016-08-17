@@ -55,6 +55,29 @@ export default class Keystone {
       });
   }
 
+  /**
+   * Return the root API endpoint for the current supported keystone version.
+   *
+   * @returns {Promise.<T>|*} A promise which will resolve with the endpoint URL string.
+   */
+  serviceEndpoint () {
+    if (!this._endpointPromise) {
+      this._endpointPromise = this.version()
+        .then((version) => {
+          if (version.links) {
+            for (let i = 0; i < version.links.length; i++) {
+              let link = version.links[i];
+              if (link.rel === 'self' && link.href) {
+                return link.href;
+              }
+            }
+          }
+          throw new Error("No service endpoint discovered.");
+        });
+    }
+    return this._endpointPromise;
+  }
+
   authenticate() {
     const body = {
       auth: {

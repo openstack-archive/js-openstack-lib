@@ -136,4 +136,70 @@ describe('Keystone', () => {
         .catch((error) => done.fail(error));
     });
   });
+
+  describe("serviceEndpoint()", () => {
+
+    it("Should return a valid endpoint to the keystone API.", (done) => {
+      const keystone = new Keystone(mockData.config);
+
+      fetchMock.mock(mockData.root());
+
+      keystone.serviceEndpoint()
+        .then((endpoint) => {
+          expect(endpoint).toEqual('http://192.168.99.99/identity_v2_admin/v3/');
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+
+    it("Should throw an exception if no endpoint is provided.", (done) => {
+      const keystone = new Keystone(mockData.config);
+
+      // Build an exception payload.
+      const mockOptions = JSON.parse(JSON.stringify(mockData.root()));
+      mockOptions.response.versions.values[0].links = [];
+      fetchMock.mock(mockOptions);
+
+      keystone.serviceEndpoint()
+        .then((response) => done.fail(response))
+        .catch((error) => {
+          expect(error).not.toBeNull();
+          done();
+        });
+    });
+
+    it("Should throw an exception if no links array exists.", (done) => {
+      const keystone = new Keystone(mockData.config);
+
+      // Build an exception payload.
+      const mockOptions = JSON.parse(JSON.stringify(mockData.root()));
+      delete mockOptions.response.versions.values[0].links;
+      fetchMock.mock(mockOptions);
+
+      keystone.serviceEndpoint()
+        .then((response) => done.fail(response))
+        .catch((error) => {
+          expect(error).not.toBeNull();
+          done();
+        });
+    });
+
+    it("Should cache its results", (done) => {
+      const keystone = new Keystone(mockData.config);
+      const mockOptions = mockData.root();
+      fetchMock.mock(mockOptions);
+
+      keystone.serviceEndpoint()
+        .then(() => {
+          // Validate that the mock has only been invoked once
+          expect(fetchMock.calls(mockOptions.name).length).toEqual(1);
+          return keystone.serviceEndpoint();
+        })
+        .then(() => {
+          expect(fetchMock.calls(mockOptions.name).length).toEqual(1);
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+  });
 });
