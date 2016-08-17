@@ -21,7 +21,8 @@ describe('Keystone', () => {
   });
 
   it('should authenticate', (done) => {
-    const authUrl = mockData.config.auth.auth_url;
+    const authUrl = "http://192.168.99.99/identity_v2_admin/v3/";
+    fetchMock.mock(mockData.root());
 
     fetchMock
       .post(authUrl, {

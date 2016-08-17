@@ -93,7 +93,9 @@ export default class Keystone {
       }
     };
 
-    return this.http.httpPost(this.cloudConfig.auth.auth_url, body)
+    return this
+      .serviceEndpoint()
+      .then((url) => this.http.httpPost(url, body))
       .then((res) => {
         this.token = res.headers.get('X-Subject-Token');
         return res.json(); // This returns a promise...
