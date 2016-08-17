@@ -13,6 +13,20 @@ export default class Keystone {
     this.http = new Http();
   }
 
+  /**
+   * Retrieve all the API versions available.
+   *
+   * @returns {Promise.<T>} A promise that will resolve with the list of API versions.
+   */
+  versions () {
+    return this.http
+      .httpGet(this.cloudConfig.auth.auth_url)
+      .then((response) => response.json())
+      .then((body) => {
+        return body.versions.values;
+      });
+  }
+
   authenticate() {
     const body = {
       auth: {

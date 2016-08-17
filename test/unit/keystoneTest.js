@@ -1,9 +1,13 @@
 import Keystone from '../../src/keystone.js';
+import * as mockData from './helpers/data/keystone';
 import fetchMock from 'fetch-mock';
 
-describe('Openstack connection test', () => {
+describe('Keystone', () => {
+
+  afterEach(fetchMock.restore);
+
   it('should export a class', () => {
-    const keystone = new Keystone(aCloudsConfig('cloud1'), 'cloud1');
+    const keystone = new Keystone(mockData.config);
     expect(keystone).toBeDefined();
   });
 
@@ -17,9 +21,7 @@ describe('Openstack connection test', () => {
   });
 
   it('should authenticate', (done) => {
-    const cloudsConfig = aCloudsConfig('cloud1');
-
-    const authUrl = cloudsConfig.clouds.cloud1.auth.auth_url;
+    const authUrl = mockData.config.auth.auth_url;
 
     fetchMock
       .post(authUrl, {
@@ -33,7 +35,7 @@ describe('Openstack connection test', () => {
         }
       });
 
-    const keystone = new Keystone(cloudsConfig.clouds.cloud1);
+    const keystone = new Keystone(mockData.config);
 
     keystone.authenticate()
       .then(() => {
@@ -49,21 +51,38 @@ describe('Openstack connection test', () => {
       });
   });
 
-  function aCloudsConfig (name) {
-    const cloudsConfig = {
-      clouds: {}
-    };
+  describe("versions()", () => {
+    it("Should return a list of all versions available on this clouds' keystone", (done) => {
+      const keystone = new Keystone(mockData.config);
 
-    cloudsConfig.clouds[name] = {
-      region_name: 'Region1',
-      auth: {
-        username: 'user',
-        password: 'pass',
-        project_name: 'js-openstack-lib',
-        auth_url: 'http://keystone/'
-      }
-    };
+      fetchMock.mock(mockData.root());
 
-    return cloudsConfig;
-  }
+      keystone.versions()
+        .then((versions) => {
+          // Quick sanity check.
+          expect(versions.length).toBe(2);
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+
+    it("Should NOT cache its results", (done) => {
+      const keystone = new Keystone(mockData.config);
+      const mockOptions = mockData.root();
+
+      fetchMock.mock(mockOptions);
+
+      keystone.versions()
+        .then(() => {
+          // Validate that the mock has only been invoked once
+          expect(fetchMock.calls(mockOptions.name).length).toEqual(1);
+          return keystone.versions();
+        })
+        .then(() => {
+          expect(fetchMock.calls(mockOptions.name).length).toEqual(2);
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+  });
 });
