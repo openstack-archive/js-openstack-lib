@@ -42,6 +42,10 @@ RECLONE=True
 #NOVACLIENT_BRANCH=milestone-proposed
 #NEUTRON_BRANCH=milestone-proposed
 #SWIFT_BRANCH=milestone-proposed
+
+[[post-config|\$KEYSTONE_CONF]]
+[cors]
+allowed_origin=http://localhost:9876
 EOL
 
 # Start devstack.
