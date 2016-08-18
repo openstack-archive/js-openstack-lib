@@ -88,6 +88,7 @@ export default class Http {
    * @returns {Promise} A promise which will resolve with the processed request response.
    */
   httpRequest (method, url, headers = {}, body) {
+
     // Sanitize the headers...
     headers = Object.assign({}, headers, this.defaultHeaders);
 
@@ -100,34 +101,50 @@ export default class Http {
     }
     const request = new Request(url, init);
 
-    let promise = Promise.resolve(request);
+    // Build the wrapper promise.
+    return new Promise((resolve, reject) => {
 
-    // Loop through the request interceptors, constructing a promise chain.
-    for (let interceptor of this.requestInterceptors) {
-      promise = promise.then(interceptor);
-    }
+      let promise = Promise.resolve(request);
 
-    // Make the actual request...
-    promise = promise
-      .then((request) => {
-        // Deconstruct the request, since fetch-mock doesn't actually support fetch(Request);
-        const init = {
-          method: request.method,
-          headers: request.headers
-        };
-        if (['GET', 'HEAD'].indexOf(request.method) === -1 && request.body) {
-          init.body = request.body;
+      // Loop through the request interceptors, constructing a promise chain.
+      for (let interceptor of this.requestInterceptors) {
+        promise = promise.then(interceptor);
+      }
+
+      // Make the actual request...
+      promise = promise
+        .then((request) => {
+          // Deconstruct the request, since fetch-mock doesn't actually support fetch(Request);
+          const init = {
+            method: request.method,
+            headers: request.headers
+          };
+          if (['GET', 'HEAD'].indexOf(request.method) === -1 && request.body) {
+            init.body = request.body;
+          }
+
+          return fetch(request.url, init);
+        });
+
+      // Fetch will treat all http responses (2xx, 3xx, 4xx, 5xx, etc) as successful responses.
+      // This will catch all 4xx and 5xx responses and return them to the catch() handler. Note
+      // that it's up to the downstream developer to determine whether what they received is an
+      // error or a failed response.
+      promise.then((response) => {
+        if (response.status >= 400) {
+          return reject(response);
+        } else {
+          return response;
         }
-
-        return fetch(request.url, init);
       });
 
-    // Pass the response content through the response interceptors...
-    for (let interceptor of this.responseInterceptors) {
-      promise = promise.then(interceptor);
-    }
+      // Pass the response content through the response interceptors...
+      for (let interceptor of this.responseInterceptors) {
+        promise = promise.then(interceptor);
+      }
 
-    return promise;
+      promise.then((response) => resolve(response), (error) => reject(error));
+    });
   }
 
   /**

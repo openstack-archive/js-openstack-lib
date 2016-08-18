@@ -189,21 +189,17 @@ describe('Http', () => {
       });
   });
 
-  it("should pass failed requests back to the invoker", (done) => {
+  it("should pass failed requests to the catch block.", (done) => {
     fetchMock.get(testUrl, {status: 500, body: testResponse});
 
     http.httpGet(testUrl)
       .then((response) => {
         // The HTTP request 'succeeded' with a failing state.
-        expect(response.status).toEqual(500);
-        return response.json();
-      })
-      .then((body) => {
-        expect(body).toEqual(testResponse);
+        expect(response).toBeNull();
         done();
       })
-      .catch((error) => {
-        expect(error).toBeNull();
+      .catch((response) => {
+        expect(response.status).toBe(500);
         done();
       });
   });
