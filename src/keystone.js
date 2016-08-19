@@ -166,7 +166,24 @@ export default class Keystone {
       });
   }
 
-  authenticate() {
+  /**
+   * Revoke an authorization token.
+   *
+   * @param {String} token The token to revoke.
+   * @param {String} adminToken An optional admin token.
+   * @returns {Promise.<T>} A promise which will resolve if the token has been successfully revoked.
+   */
+  tokenRevoke (token, adminToken = null) {
+    let headers = {
+      'X-Subject-Token': token,
+      'X-Auth-Token': adminToken || token
+    };
+
+    return this.serviceEndpoint()
+      .then((url) => this.http.httpRequest('DELETE', `${url}auth/tokens`, headers));
+  }
+
+  authenticate () {
     const body = {
       auth: {
         identity: {

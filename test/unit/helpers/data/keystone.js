@@ -375,8 +375,22 @@ function tokenIssue () {
   };
 }
 
+function tokenRevoke (token, adminToken = null) {
+  return {
+    method: 'DELETE',
+    matcher: 'http://192.168.99.99/identity_v2_admin/v3/auth/tokens',
+    headers: {
+      'X-Subject-Token': token,
+      'X-Auth-Token': adminToken || token
+    },
+    response: {
+      status: 204
+    }
+  };
+}
 export {
   cloudConfig as config,
   rootResponse as root,
-  tokenIssue as tokenIssue
+  tokenIssue as tokenIssue,
+  tokenRevoke as tokenRevoke
 };

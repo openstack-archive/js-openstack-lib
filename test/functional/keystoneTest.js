@@ -114,4 +114,52 @@ describe("Keystone", () => {
         });
     });
   });
+
+  describe("tokenRevoke()", () => {
+    let keystone = null;
+
+    beforeEach(() => {
+      keystone = new Keystone(config.clouds.devstack);
+    });
+
+    it("should permit self-revocation.", (done) => {
+      keystone
+        .tokenIssue()
+        .then((token) => {
+          return keystone.tokenRevoke(token);
+        })
+        .then((response) => {
+          expect(response.status).toBe(204); // No content
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+
+    it("should allow an admin to revoke another token.", (done) => {
+      let adminToken;
+
+      keystone
+        .tokenIssue('admin', 'password', 'admin', 'default', 'default') // Create an Admin token.
+        .then((token) => {
+          adminToken = token;
+          return keystone.tokenIssue(); // Regular token.
+        })
+        .then((token) => keystone.tokenRevoke(token, adminToken))
+        .then((response) => {
+          expect(response.status).toBe(204); // No content
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+
+    it("should throw an exception if invalid token is provided.", (done) => {
+      keystone
+        .tokenRevoke('not_a_valid_token')
+        .then((response) => done.fail(response))
+        .catch((error) => {
+          expect(error).not.toBeNull();
+          done();
+        });
+    });
+  });
 });

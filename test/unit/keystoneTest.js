@@ -237,4 +237,51 @@ describe('Keystone', () => {
         .catch((error) => done.fail(error));
     });
   });
+
+  describe("tokenRevoke()", () => {
+    let keystone = null;
+
+    beforeEach(() => {
+      fetchMock.mock(mockData.root());
+      keystone = new Keystone(mockData.config);
+    });
+
+    it("should return a 204 response on a valid revocation.", (done) => {
+      const token = 'test_token';
+      const adminToken = 'test_admin_token';
+
+      fetchMock.mock(mockData.tokenRevoke(token, adminToken));
+      keystone
+        .tokenRevoke(token, adminToken)
+        .then((response) => {
+          expect(response.status).toEqual(204); // From mock data
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+
+    it("Should not cache its results", (done) => {
+      const token = 'test_token';
+
+      let mockOptions = mockData.tokenRevoke(token);
+      fetchMock.mock(mockOptions);
+
+      keystone
+        .tokenRevoke(token)
+        .then((response) => {
+          expect(response.status).toEqual(204);
+          expect(fetchMock.calls(mockOptions.name).length).toEqual(1);
+
+          // Yes, I realize that this should actually return an error since the token is no
+          // longer valid, but we're testing for promise caching here, not valid http flow.
+          return keystone.tokenRevoke(token);
+        })
+        .then((response) => {
+          expect(response.status).toEqual(204);
+          expect(fetchMock.calls(mockOptions.name).length).toEqual(2);
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+  });
 });
