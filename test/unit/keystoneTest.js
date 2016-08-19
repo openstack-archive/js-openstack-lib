@@ -284,4 +284,45 @@ describe('Keystone', () => {
         .catch((error) => done.fail(error));
     });
   });
+
+  describe("catalogList()", () => {
+    let keystone = null;
+
+    beforeEach(() => {
+      fetchMock.mock(mockData.root());
+      keystone = new Keystone(mockData.config);
+    });
+
+    it("should return the catalog as an array.", (done) => {
+      const token = 'test_token';
+
+      fetchMock.mock(mockData.catalogList(token));
+      keystone
+        .catalogList(token)
+        .then((catalog) => {
+          expect(catalog.length).not.toBe(0);
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+
+    it("Should not cache its results", (done) => {
+      const token = 'test_token';
+
+      let mockOptions = mockData.catalogList(token);
+      fetchMock.mock(mockOptions);
+
+      keystone
+        .catalogList(token)
+        .then(() => {
+          expect(fetchMock.calls(mockOptions.name).length).toEqual(1);
+          return keystone.catalogList(token);
+        })
+        .then(() => {
+          expect(fetchMock.calls(mockOptions.name).length).toEqual(2);
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+  });
 });

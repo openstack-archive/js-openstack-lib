@@ -183,6 +183,25 @@ export default class Keystone {
       .then((url) => this.http.httpRequest('DELETE', `${url}auth/tokens`, headers));
   }
 
+  /**
+   * List the service catalog for the configured cloud.
+   *
+   * @param {String} token The authorization token.
+   * @returns {Promise.<T>} A promise which will resolve with the service catalog.
+   */
+  catalogList (token = null) {
+    const headers = {};
+    if (token) {
+      headers['X-Auth-Token'] = token;
+    }
+
+    return this
+      .serviceEndpoint()
+      .then((url) => this.http.httpRequest('GET', `${url}auth/catalog`, headers))
+      .then((response) => response.json())
+      .then((body) => body.catalog);
+  }
+
   authenticate () {
     const body = {
       auth: {

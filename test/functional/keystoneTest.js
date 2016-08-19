@@ -161,5 +161,36 @@ describe("Keystone", () => {
           done();
         });
     });
+
+    describe("catalogList()", () => {
+      let keystone = null;
+
+      beforeEach(() => {
+        keystone = new Keystone(config.clouds.devstack);
+      });
+
+      it("should list a catalog.", (done) => {
+        keystone
+          .tokenIssue()
+          .then((token) => {
+            return keystone.catalogList(token);
+          })
+          .then((catalog) => {
+            expect(catalog.length).not.toBe(0);
+            done();
+          })
+          .catch((error) => done.fail(error));
+      });
+
+      it("should error if not authenticated.", (done) => {
+        keystone
+          .catalogList()
+          .then((response) => done.fail(response))
+          .catch((error) => {
+            expect(error).not.toBeNull();
+            done();
+          });
+      });
+    });
   });
 });
