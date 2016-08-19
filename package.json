@@ -15,7 +15,8 @@
     "lint": "eslint ./",
     "prepublish": "nsp check; npm run build",
     "build": "babel src -d dist && webpack",
-    "docs": "(cd ./doc && make html)"
+    "docs": "npm run jsdoc; (cd ./doc && make html)",
+    "jsdoc": "jsdoc -t node_modules/jsdoc-sphinx/template -d ./doc/source/jsdoc ./src"
   },
   "repository": {
     "type": "git",
@@ -45,6 +46,8 @@
     "jasmine": "^2.4.1",
     "jasmine-core": "^2.4.1",
     "js-yaml": "^3.6.1",
+    "jsdoc": "^3.4.0",
+    "jsdoc-sphinx": "0.0.6",
     "json-loader": "^0.5.4",
     "karma": "^1.1.1",
     "karma-chrome-launcher": "^1.0.1",

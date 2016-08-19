@@ -15,6 +15,7 @@ Topics
    :maxdepth: 2
 
    getting_started
+   reference_documentation
    dev_get_started
    specs
 

@@ -3,7 +3,8 @@ import Http from './util/http';
 /**
  * A list of all supported versions. Please keep this array sorted by most recent.
  *
- * @type {Array} An array of version instances.
+ * @type {Array}
+ * @ignore
  */
 const supportedKeystoneVersions = [
   'v3.7'
@@ -11,6 +12,16 @@ const supportedKeystoneVersions = [
 
 export default class Keystone {
 
+  /**
+   * This class provides direct, idempotent, low-level access to the Keystone API of a specific
+   * cloud. The constructor requires that you provide a configuration object for a specific
+   * cloud, formatted as per the os-client-config specification of clouds.yaml. An important
+   * difference is that it does not accept the entire clouds.yaml structure, only the subsection
+   * that refers to a specific cloud.
+   *
+   * @param {{}} cloudConfig The configuration object for a specific cloud.
+   * @see http://docs.openstack.org/developer/os-client-config/#site-specific-file-locations
+   */
   constructor (cloudConfig) {
     // Sanity checks.
     if (!cloudConfig) {
@@ -29,6 +40,7 @@ export default class Keystone {
    * @param {string} path A string representing the dot notation of a config path to read.
    * @private
    * @returns {String} The value found in the config, or null.
+   * @ignore
    */
   _safeConfigGet (path) {
     let segments = path.split('.');

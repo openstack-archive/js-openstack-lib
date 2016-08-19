@@ -42,3 +42,4 @@ clouds.yaml
 
 # Doc build
 doc/build
+doc/source/jsdoc
