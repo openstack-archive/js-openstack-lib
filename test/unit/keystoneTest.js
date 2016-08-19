@@ -14,39 +14,10 @@ describe('Keystone', () => {
   it('should throw an error for an empty config', () => {
     try {
       const keystone = new Keystone();
-      keystone.authenticate();
+      keystone.tokenIssue();
     } catch (e) {
       expect(e.message).toEqual('A configuration is required.');
     }
-  });
-
-  it('should authenticate', (done) => {
-    const authUrl = "http://192.168.99.99/identity_v2_admin/v3/";
-    fetchMock.mock(mockData.root());
-
-    fetchMock
-      .post(authUrl, {
-        body: {
-          catalog: {
-            foo: 'bar'
-          }
-        },
-        headers: {
-          'X-Subject-Token': 'the-token'
-        }
-      });
-
-    const keystone = new Keystone(mockData.config);
-
-    keystone.authenticate()
-      .then(() => {
-        expect(fetchMock.called(authUrl)).toEqual(true);
-        expect(typeof keystone.token).toEqual('string');
-        expect(keystone.token).toEqual('the-token');
-        expect(keystone.catalog).toEqual({foo: 'bar'});
-        done();
-      })
-      .catch((error) => done.fail(error));
   });
 
   describe("versions()", () => {

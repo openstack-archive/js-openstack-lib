@@ -201,34 +201,4 @@ export default class Keystone {
       .then((response) => response.json())
       .then((body) => body.catalog);
   }
-
-  authenticate () {
-    const body = {
-      auth: {
-        identity: {
-          methods: ['password'],
-          password: {
-            user: {
-              name: this.cloudConfig.auth.username,
-              password: this.cloudConfig.auth.password
-            }
-          }
-        }
-      }
-    };
-
-    return this
-      .serviceEndpoint()
-      .then((url) => this.http.httpPost(url, body))
-      .then((res) => {
-        this.token = res.headers.get('X-Subject-Token');
-        return res.json(); // This returns a promise...
-      })
-      .then((body) => {
-        this.catalog = body.catalog || {};
-      })
-      .catch((reason) => {
-        return reason;
-      });
-  }
 }
