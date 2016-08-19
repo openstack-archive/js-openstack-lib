@@ -46,10 +46,7 @@ describe('Keystone', () => {
         expect(keystone.catalog).toEqual({foo: 'bar'});
         done();
       })
-      .catch((reason) => {
-        expect(reason).toBeUndefined();
-        done();
-      });
+      .catch((error) => done.fail(error));
   });
 
   describe("versions()", () => {
@@ -198,6 +195,43 @@ describe('Keystone', () => {
         })
         .then(() => {
           expect(fetchMock.calls(mockOptions.name).length).toEqual(1);
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+  });
+
+  describe("tokenIssue()", () => {
+
+    it("should 'just work' by using provided credentials from the config.", (done) => {
+      fetchMock.mock(mockData.root());
+      fetchMock.mock(mockData.tokenIssue());
+      const keystone = new Keystone(mockData.config);
+      keystone
+        .tokenIssue()
+        .then((token) => {
+          expect(token).toEqual('test_token'); // From mock data
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+
+    it("Should not cache its results", (done) => {
+      let mockOptions = mockData.tokenIssue();
+      fetchMock.mock(mockData.root());
+      fetchMock.mock(mockOptions);
+
+      const keystone = new Keystone(mockData.config);
+      keystone
+        .tokenIssue()
+        .then((token) => {
+          expect(token).toEqual('test_token'); // From mock data
+          expect(fetchMock.calls(mockOptions.name).length).toEqual(1);
+          return keystone.tokenIssue();
+        })
+        .then((token) => {
+          expect(token).toEqual('test_token'); // From mock data
+          expect(fetchMock.calls(mockOptions.name).length).toEqual(2);
           done();
         })
         .catch((error) => done.fail(error));

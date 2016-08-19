@@ -14,6 +14,7 @@
  * under the License.
  */
 
+import Version from '../../src/util/version';
 import Keystone from "../../src/keystone";
 import config from "./helpers/cloudsConfig";
 
@@ -61,6 +62,56 @@ describe("Keystone", () => {
           done();
         })
         .catch((error) => done.fail(error));
+    });
+  });
+
+  describe("tokenIssue()", () => {
+    let keystone = null;
+
+    beforeEach(() => {
+      keystone = new Keystone(config.clouds.devstack);
+    });
+
+    it("should 'just work' by using provided credentials from the config.", (done) => {
+      keystone
+        .tokenIssue()
+        .then((token) => {
+          expect(token).not.toBeNull();
+          done();
+        })
+        .catch((error) => {
+          // Fail this test.
+          expect(error).toBeNull();
+          done();
+        });
+    });
+
+    it("should permit passing your own user, password, and project.", (done) => {
+      keystone
+        .tokenIssue('admin', 'password', 'admin', 'default', 'default')
+        .then((token) => {
+          expect(token).not.toBeNull();
+          done();
+        })
+        .catch((error) => {
+          // Fail this test.
+          expect(error).toBeNull();
+          done();
+        });
+    });
+
+    it("should throw an exception if invalid credentials are provided.", (done) => {
+      keystone
+        .tokenIssue('foo', 'bar', 'lolProject', 'notADomain', 'notADomain')
+        .then((token) => {
+          // Fail this test.
+          expect(token).toBeNull();
+          done();
+        })
+        .catch((error) => {
+          expect(error).not.toBeNull();
+          done();
+        });
     });
   });
 });
