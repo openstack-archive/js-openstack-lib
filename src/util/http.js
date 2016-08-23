@@ -114,10 +114,28 @@ export default class Http {
       // Make the actual request...
       promise = promise
         .then((request) => {
+          // BUG: Fetch-mock doesn't sanely match against a Headers() instance, whose
+          // implementation varies due to isomorphic-fetch. Here we deconstruct the instance
+          // back into a map, so that the actual fetch() request is properly handled.
+          const headers = {};
+
+          /* istanbul ignore next -- coverage depends on runtime */
+          if (request.headers.forEach) {
+            // Isomorphic-fetch exposes forEach().
+            request.headers.forEach((value, key) => {
+              headers[key] = value;
+            });
+          } else if (request.headers.entries) {
+            // ES2015 exposes entries(). Sadly, Babel does not support yield.
+            for (let [key, value] of request.headers.entries()) {
+              headers[key] = value;
+            }
+          }
+
           // Deconstruct the request, since fetch-mock doesn't actually support fetch(Request);
           const init = {
             method: request.method,
-            headers: request.headers
+            headers
           };
           if (['GET', 'HEAD'].indexOf(request.method) === -1 && request.body) {
             init.body = request.body;

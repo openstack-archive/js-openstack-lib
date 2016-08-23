@@ -39,10 +39,7 @@ describe('Http', () => {
         expect(body).toEqual(testResponse);
         done();
       })
-      .catch((error) => {
-        expect(error).toBeNull();
-        done();
-      });
+      .catch((error) => done.fail(error));
   });
 
   it("should make GET requests", (done) => {
@@ -55,10 +52,7 @@ describe('Http', () => {
         expect(body).toEqual(testResponse);
         done();
       })
-      .catch((error) => {
-        expect(error).toBeNull();
-        done();
-      });
+      .catch((error) => done.fail(error));
   });
 
   it("should make PUT requests", (done) => {
@@ -71,10 +65,7 @@ describe('Http', () => {
         expect(body).toEqual(testResponse);
         done();
       })
-      .catch((error) => {
-        expect(error).toBeNull();
-        done();
-      });
+      .catch((error) => done.fail(error));
   });
 
   it("should make POST requests", (done) => {
@@ -87,10 +78,7 @@ describe('Http', () => {
         expect(body).toEqual(testResponse);
         done();
       })
-      .catch((error) => {
-        expect(error).toBeNull();
-        done();
-      });
+      .catch((error) => done.fail(error));
   });
 
   it("should make DELETE requests", (done) => {
@@ -101,10 +89,7 @@ describe('Http', () => {
         expect(fetchMock.called(testUrl)).toEqual(true);
         done();
       })
-      .catch((error) => {
-        expect(error).toBeNull();
-        done();
-      });
+      .catch((error) => done.fail(error));
   });
 
   it("should permit setting default headers", (done) => {
@@ -114,38 +99,32 @@ describe('Http', () => {
     http.httpGet(testUrl)
       .then(() => {
         let headers = fetchMock.lastOptions().headers;
-        expect(headers.get('custom-header')).toEqual('Custom-Value');
+        expect(headers['custom-header']).toEqual('Custom-Value');
         done();
       })
-      .catch((error) => {
-        expect(error).toBeNull();
-        done();
-      });
+      .catch((error) => done.fail(error));
   });
 
   it("should permit request interception", (done) => {
     fetchMock.get(testUrl, testResponse);
 
     http.requestInterceptors.push((request) => {
-      request.headers.direct = true;
+      request.headers.set('direct', 'true');
       return request;
     });
     http.requestInterceptors.push((request) => {
-      request.headers.promise = true;
+      request.headers.set('promise', 'true');
       return Promise.resolve(request);
     });
 
     http.httpGet(testUrl)
       .then(() => {
         let options = fetchMock.lastOptions();
-        expect(options.headers.direct).toEqual(true);
-        expect(options.headers.promise).toEqual(true);
+        expect(options.headers.direct).toEqual('true');
+        expect(options.headers.promise).toEqual('true');
         done();
       })
-      .catch((error) => {
-        expect(error).toBeNull();
-        done();
-      });
+      .catch((error) => done.fail(error));
   });
 
   it("should permit response interception", (done) => {
@@ -166,10 +145,7 @@ describe('Http', () => {
         expect(response.headers.promise).toEqual(true);
         done();
       })
-      .catch((error) => {
-        expect(error).toBeNull();
-        done();
-      });
+      .catch((error) => done.fail(error));
   });
 
   it("should pass exceptions back to the invoker", (done) => {
@@ -178,11 +154,7 @@ describe('Http', () => {
     });
 
     http.httpGet(testUrl)
-      .then((response) => {
-        // We shouldn't reach this point.
-        expect(response).toBeNull();
-        done();
-      })
+      .then((response) => done.fail(response))
       .catch((error) => {
         expect(error.stack).toBeDefined();
         done();
@@ -193,14 +165,26 @@ describe('Http', () => {
     fetchMock.get(testUrl, {status: 500, body: testResponse});
 
     http.httpGet(testUrl)
-      .then((response) => {
-        // The HTTP request 'succeeded' with a failing state.
-        expect(response).toBeNull();
-        done();
-      })
+      .then((response) => done.fail(response))
       .catch((response) => {
         expect(response.status).toBe(500);
         done();
       });
+  });
+
+  it("should not interfere with mocks that have matching headers.", (done) => {
+    fetchMock.mock({
+      method: 'GET',
+      matcher: testUrl,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      response: testResponse
+    });
+
+    http
+      .httpRequest('GET', testUrl, {'Content-Type': 'application/json'})
+      .then(() => done())
+      .catch((error) => done.fail(error));
   });
 });
