@@ -1,7 +1,4 @@
-import log from 'loglevel';
 import Http from './util/http';
-
-log.setLevel('INFO');
 
 export default class Keystone {
 
