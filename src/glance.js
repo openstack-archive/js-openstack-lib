@@ -54,6 +54,28 @@ export default class Glance {
   }
 
   /**
+   * This method resolves any passed token into an appropriate header, as well as the base URL
+   * for the glance API. these variables may then be used to feed other requests.
+   *
+   * @param {Promise|String} token A promise, or string, representing a token.
+   * @returns {Promise} A promise which resolves with [url, token].
+   * @private
+   */
+  _requestComponents (token = null) {
+    // Make sure the token is a promise.
+    let headerPromise = new Promise((resolve) => resolve(token))
+      .then((token) => {
+        if (token) {
+          return {
+            'X-Auth-Token': token
+          };
+        }
+        return {};
+      });
+    return Promise.all([this.serviceEndpoint(), headerPromise]);
+  }
+
+  /**
    * Retrieve all the API versions available.
    *
    * @returns {Promise.<T>} A promise that will resolve with the list of API versions.
@@ -105,5 +127,19 @@ export default class Glance {
         });
     }
     return this._endpointPromise;
+  }
+
+  /**
+   * List the images available on glance.
+   *
+   * @param {String} token An authorization token, or a promise which will resolve into one.
+   * @returns {Promise.<T>} A promise which will resolve with the list of images.
+   */
+  imageList (token = null) {
+    return this
+      ._requestComponents(token)
+      .then(([url, headers]) => this.http.httpRequest('GET', `${url}images`, headers))
+      .then((response) => response.json())
+      .then((body) => body.images);
   }
 }

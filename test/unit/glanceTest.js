@@ -187,4 +187,45 @@ describe('Glance', () => {
         .catch((error) => done.fail(error));
     });
   });
+
+  describe("imageList()", () => {
+    let glance = null;
+
+    beforeEach(() => {
+      fetchMock.mock(mockData.root());
+      glance = new Glance(mockData.config);
+    });
+
+    it("should return the images as an array.", (done) => {
+      const token = 'test_token';
+
+      fetchMock.mock(mockData.imageList(token));
+      glance
+        .imageList(token)
+        .then((images) => {
+          expect(images.length).not.toBe(0);
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+
+    it("Should not cache its results", (done) => {
+      const token = 'test_token';
+
+      let mockOptions = mockData.imageList(token);
+      fetchMock.mock(mockOptions);
+
+      glance
+        .imageList(token)
+        .then(() => {
+          expect(fetchMock.calls(mockOptions.name).length).toEqual(1);
+          return glance.imageList(token);
+        })
+        .then(() => {
+          expect(fetchMock.calls(mockOptions.name).length).toEqual(2);
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+  });
 });
