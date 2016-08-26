@@ -5,9 +5,17 @@ import path from 'path';
 
 function getDevstackConfig() {
   const karmaConfig = karma.parseConfig(path.resolve('./karma.conf.js'));
-  return "[[post-config|$KEYSTONE_CONF]]\n" +
-    "[cors]\n" +
-    "allowed_origin=http://localhost:" + karmaConfig.port + "\n";
+
+  return getCorsConfig('$KEYSTONE_CONF', karmaConfig) +
+    getCorsConfig('$GLANCE_API_CONF', karmaConfig);
+
+}
+
+function getCorsConfig(service, karmaConfig) {
+  return `[[post-config|${service}]]
+[cors]
+allowed_origin=http://localhost:${karmaConfig.port}
+`;
 }
 
 fs.appendFile(process.env.BASE + '/new/devstack/local.conf', getDevstackConfig(), (err) => {
