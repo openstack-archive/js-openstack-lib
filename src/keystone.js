@@ -57,6 +57,30 @@ export default class Keystone {
   }
 
   /**
+   * This method builds common components of a keystone request. It converts any passed token
+   * into a promise, resolves the base URL, and then passes the results as an .all() promise,
+   * which may be destructured in a followup request.
+   *
+   * @param {Promise|String} token A promise, or string, representing a token.
+   * @returns {Promise} A promise which resolves with [url, token].
+   * @private
+   */
+  _requestComponents (token = null) {
+    // Make sure the token is a promise.
+    let headerPromise = Promise
+      .resolve(token)
+      .then((token) => {
+        if (token) {
+          return {
+            'X-Auth-Token': token
+          };
+        }
+        return {};
+      });
+    return Promise.all([this.serviceEndpoint(), headerPromise]);
+  }
+
+  /**
    * Retrieve all the API versions available.
    *
    * @returns {Promise.<T>} A promise that will resolve with the list of API versions.
@@ -186,13 +210,15 @@ export default class Keystone {
    * @returns {Promise.<T>} A promise which will resolve if the token has been successfully revoked.
    */
   tokenRevoke (token, adminToken = null) {
-    let headers = {
-      'X-Subject-Token': token,
-      'X-Auth-Token': adminToken || token
-    };
-
-    return this.serviceEndpoint()
-      .then((url) => this.http.httpRequest('DELETE', `${url}auth/tokens`, headers));
+    return Promise
+      .all([this.serviceEndpoint(), token, adminToken])
+      .then(([url, token, adminToken]) => {
+        return [url, {
+          'X-Subject-Token': token,
+          'X-Auth-Token': adminToken || token
+        }];
+      })
+      .then(([url, headers]) => this.http.httpRequest('DELETE', `${url}auth/tokens`, headers));
   }
 
   /**
@@ -202,14 +228,9 @@ export default class Keystone {
    * @returns {Promise.<T>} A promise which will resolve with the service catalog.
    */
   catalogList (token = null) {
-    const headers = {};
-    if (token) {
-      headers['X-Auth-Token'] = token;
-    }
-
     return this
-      .serviceEndpoint()
-      .then((url) => this.http.httpRequest('GET', `${url}auth/catalog`, headers))
+      ._requestComponents(token)
+      .then(([url, headers]) => this.http.httpRequest('GET', `${url}auth/catalog`, headers))
       .then((response) => response.json())
       .then((body) => body.catalog);
   }
