@@ -34,7 +34,9 @@ describe("Keystone", () => {
           expect(versions.length > 0).toBeTruthy();
           done();
         })
-        .catch((error) => done.fail(error));
+        .catch((response) => response.json()
+          .then((body) => done.fail(JSON.stringify(body)))
+        );
     });
   });
 
@@ -65,7 +67,9 @@ describe("Keystone", () => {
           fail("Current devstack keystone version is not supported.");
           done();
         })
-        .catch((error) => done.fail(error));
+        .catch((response) => response.json()
+          .then((body) => done.fail(JSON.stringify(body)))
+        );
     });
   });
 
@@ -83,11 +87,9 @@ describe("Keystone", () => {
           expect(token).not.toBeNull();
           done();
         })
-        .catch((error) => {
-          // Fail this test.
-          expect(error).toBeNull();
-          done();
-        });
+        .catch((response) => response.json()
+          .then((body) => done.fail(JSON.stringify(body)))
+        );
     });
 
     it("should permit passing your own user, password, and project.", (done) => {
@@ -102,21 +104,15 @@ describe("Keystone", () => {
           expect(token).not.toBeNull();
           done();
         })
-        .catch((error) => {
-          // Fail this test.
-          expect(error).toBeNull();
-          done();
-        });
+        .catch((response) => response.json()
+          .then((body) => done.fail(JSON.stringify(body)))
+        );
     });
 
     it("should throw an exception if invalid credentials are provided.", (done) => {
       keystone
         .tokenIssue('foo', 'bar', 'lolProject', 'notADomain', 'notADomain')
-        .then((token) => {
-          // Fail this test.
-          expect(token).toBeNull();
-          done();
-        })
+        .then((token) => done.fail(token))
         .catch((error) => {
           expect(error).not.toBeNull();
           done();
@@ -141,7 +137,9 @@ describe("Keystone", () => {
           expect(response.status).toBe(204); // No content
           done();
         })
-        .catch((error) => done.fail(error));
+        .catch((response) => response.json()
+          .then((body) => done.fail(JSON.stringify(body)))
+        );
     });
 
     it("should allow an admin to revoke another token.", (done) => {
@@ -158,7 +156,9 @@ describe("Keystone", () => {
           expect(response.status).toBe(204); // No content
           done();
         })
-        .catch((error) => done.fail(error));
+        .catch((response) => response.json()
+          .then((body) => done.fail(JSON.stringify(body)))
+        );
     });
 
     it("should throw an exception if invalid token is provided.", (done) => {
@@ -188,7 +188,9 @@ describe("Keystone", () => {
             expect(catalog.length).not.toBe(0);
             done();
           })
-          .catch((error) => done.fail(error));
+          .catch((response) => response.json()
+            .then((body) => done.fail(JSON.stringify(body)))
+          );
       });
 
       it("should error if not authenticated.", (done) => {
