@@ -99,50 +99,7 @@ describe('Http', () => {
     http.httpGet(testUrl)
       .then(() => {
         let headers = fetchMock.lastOptions().headers;
-        expect(headers['custom-header']).toEqual('Custom-Value');
-        done();
-      })
-      .catch((error) => done.fail(error));
-  });
-
-  it("should permit request interception", (done) => {
-    fetchMock.get(testUrl, testResponse);
-
-    http.requestInterceptors.push((request) => {
-      request.headers.set('direct', 'true');
-      return request;
-    });
-    http.requestInterceptors.push((request) => {
-      request.headers.set('promise', 'true');
-      return Promise.resolve(request);
-    });
-
-    http.httpGet(testUrl)
-      .then(() => {
-        let options = fetchMock.lastOptions();
-        expect(options.headers.direct).toEqual('true');
-        expect(options.headers.promise).toEqual('true');
-        done();
-      })
-      .catch((error) => done.fail(error));
-  });
-
-  it("should permit response interception", (done) => {
-    fetchMock.get(testUrl, testResponse);
-
-    http.responseInterceptors.push((response) => {
-      response.headers.direct = true;
-      return response;
-    });
-    http.responseInterceptors.push((response) => {
-      response.headers.promise = true;
-      return Promise.resolve(response);
-    });
-
-    http.httpGet(testUrl)
-      .then((response) => {
-        expect(response.headers.direct).toEqual(true);
-        expect(response.headers.promise).toEqual(true);
+        expect(headers['Custom-Header']).toEqual('Custom-Value');
         done();
       })
       .catch((error) => done.fail(error));

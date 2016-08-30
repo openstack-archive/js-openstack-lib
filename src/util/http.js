@@ -20,8 +20,9 @@ import 'isomorphic-fetch';
  * This utility class provides an abstraction layer for HTTP calls via fetch(). Its purpose is
  * to provide common, SDK-wide behavior for all HTTP requests. Included are:
  *
- * - Providing a common extension point for request and response manipulation.
  * - Access to default headers.
+ * - Convenience GET/PUT/POST/DELETE methods.
+ * - Passing 4xx and 5xx responses to the catch() handler.
  *
  * In the future, this class chould also be extended to provide:
  *
@@ -31,28 +32,6 @@ import 'isomorphic-fetch';
  * - Other features.
  */
 export default class Http {
-
-  /**
-   * The list of active request interceptors for this instance. You may modify this list to
-   * adjust how your responses are processed. Each interceptor will be passed the Request
-   * instance, which must be returned from the interceptor either directly, or via a promise.
-   *
-   * @returns {Array} An array of all request interceptors.
-   */
-  get requestInterceptors () {
-    return this._requestInterceptors;
-  }
-
-  /**
-   * The list of active response interceptors for this instance. Each interceptor will be passed
-   * the raw (read-only) Response instance, which should be returned from the interceptor either
-   * directly, or via a promise.
-   *
-   * @returns {Array} An array of all response interceptors.
-   */
-  get responseInterceptors () {
-    return this._responseInterceptors;
-  }
 
   /**
    * The default headers which will be sent with every request. A copy of these headers will be
@@ -69,9 +48,6 @@ export default class Http {
    * Create a new HTTP handler.
    */
   constructor () {
-    this._requestInterceptors = [];
-    this._responseInterceptors = [];
-
     // Add default response interceptors.
     this._defaultHeaders = {
       'Content-Type': 'application/json'
@@ -104,45 +80,7 @@ export default class Http {
     // Build the wrapper promise.
     return new Promise((resolve, reject) => {
 
-      let promise = Promise.resolve(request);
-
-      // Loop through the request interceptors, constructing a promise chain.
-      for (let interceptor of this.requestInterceptors) {
-        promise = promise.then(interceptor);
-      }
-
-      // Make the actual request...
-      promise = promise
-        .then((request) => {
-          // BUG: Fetch-mock doesn't sanely match against a Headers() instance, whose
-          // implementation varies due to isomorphic-fetch. Here we deconstruct the instance
-          // back into a map, so that the actual fetch() request is properly handled.
-          const headers = {};
-
-          /* istanbul ignore next -- coverage depends on runtime */
-          if (request.headers.forEach) {
-            // Isomorphic-fetch exposes forEach().
-            request.headers.forEach((value, key) => {
-              headers[key] = value;
-            });
-          } else if (request.headers.entries) {
-            // ES2015 exposes entries(). Sadly, Babel does not support yield.
-            for (let [key, value] of request.headers.entries()) {
-              headers[key] = value;
-            }
-          }
-
-          // Deconstruct the request, since fetch-mock doesn't actually support fetch(Request);
-          const init = {
-            method: request.method,
-            headers
-          };
-          if (['GET', 'HEAD'].indexOf(request.method) === -1 && request.body) {
-            init.body = request.body;
-          }
-
-          return fetch(request.url, init);
-        });
+      let promise = fetch(request.url, init);
 
       // Fetch will treat all http responses (2xx, 3xx, 4xx, 5xx, etc) as successful responses.
       // This will catch all 4xx and 5xx responses and return them to the catch() handler. Note
@@ -155,11 +93,6 @@ export default class Http {
           return response;
         }
       });
-
-      // Pass the response content through the response interceptors...
-      for (let interceptor of this.responseInterceptors) {
-        promise = promise.then(interceptor);
-      }
 
       promise.then((response) => resolve(response), (error) => reject(error));
     });
