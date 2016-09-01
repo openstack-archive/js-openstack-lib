@@ -23,15 +23,16 @@ export default class Keystone extends AbstractService {
    * @see http://docs.openstack.org/developer/os-client-config/#site-specific-file-locations
    */
   constructor (cloudConfig) {
-    super();
-
     // Sanity checks.
     if (!cloudConfig) {
       throw new Error('A configuration is required.');
     }
     // Clone the config, so that this instance is immutable
     // at runtime (no modifying the config after the fact).
-    this.cloudConfig = Object.assign({}, cloudConfig);
+    cloudConfig = Object.assign({}, cloudConfig);
+
+    super(cloudConfig.auth.auth_url, supportedKeystoneVersions);
+    this.cloudConfig = cloudConfig;
   }
 
   /**
@@ -87,31 +88,8 @@ export default class Keystone extends AbstractService {
    * @returns {Promise.<T>} A promise that will resolve with the list of API versions.
    */
   versions () {
-    return this.http
-      .httpGet(this.cloudConfig.auth.auth_url)
-      .then((response) => response.json())
-      .then((body) => {
-        return body.versions.values;
-      });
-  }
-
-  /**
-   * Retrieve the API version declaration that is currently in use by this keystone
-   * instance.
-   *
-   * @returns {Promise.<T>} A promise that will resolve with the specific API version.
-   */
-  version () {
-    return this
-      .versions()
-      .then((versions) => {
-        for (let version of versions) {
-          if (supportedKeystoneVersions.indexOf(version.id) > -1) {
-            return version;
-          }
-        }
-        throw new Error("No supported Keystone API version available.");
-      });
+    return super.versions()
+      .then((versions) => versions.values);
   }
 
   /**
