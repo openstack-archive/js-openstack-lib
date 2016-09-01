@@ -20,6 +20,7 @@ import config from "./helpers/cloudsConfig";
 
 describe("Keystone", () => {
   let devstackConfig = config.clouds.devstack;
+  let adminConfig = config.clouds['devstack-admin'];
   let keystone = new Keystone(devstackConfig);
 
   describe("versions()", () => {
@@ -88,7 +89,12 @@ describe("Keystone", () => {
 
     it("should permit passing your own user, password, and project.", (done) => {
       keystone
-        .tokenIssue('admin', 'password', 'admin', 'default', 'default')
+        .tokenIssue(
+          adminConfig.auth.username,
+          adminConfig.auth.password,
+          adminConfig.auth.project_name,
+          adminConfig.auth.user_domain_id,
+          adminConfig.auth.project_domain_id)
         .then((token) => {
           expect(token).not.toBeNull();
           done();
@@ -137,9 +143,9 @@ describe("Keystone", () => {
 
     it("should allow an admin to revoke another token.", (done) => {
       let adminToken;
+      let adminKeystone = new Keystone(adminConfig);
 
-      keystone
-        .tokenIssue('admin', 'password', 'admin', 'default', 'default') // Create an Admin token.
+      adminKeystone.tokenIssue() // Get an admin token.
         .then((token) => {
           adminToken = token;
           return keystone.tokenIssue(); // Regular token.
