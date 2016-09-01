@@ -15,6 +15,7 @@
  */
 
 import 'isomorphic-fetch';
+import log from 'loglevel';
 
 /**
  * This utility class provides an abstraction layer for HTTP calls via fetch(). Its purpose is
@@ -79,7 +80,7 @@ export default class Http {
 
     // Build the wrapper promise.
     return new Promise((resolve, reject) => {
-
+      log.debug('-->', `HTTP ${method}`, url, JSON.stringify(headers), JSON.stringify(body));
       let promise = fetch(request.url, init);
 
       // Fetch will treat all http responses (2xx, 3xx, 4xx, 5xx, etc) as successful responses.
@@ -87,6 +88,7 @@ export default class Http {
       // that it's up to the downstream developer to determine whether what they received is an
       // error or a failed response.
       promise.then((response) => {
+        log.debug('<--', `HTTP ${response.status}`);
         if (response.status >= 400) {
           return reject(response);
         } else {

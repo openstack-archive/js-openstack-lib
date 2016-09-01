@@ -17,6 +17,9 @@
 import Version from '../../src/util/version';
 import Keystone from "../../src/keystone";
 import config from "./helpers/cloudsConfig";
+import log from 'loglevel';
+
+log.setLevel("DEBUG");
 
 describe("Keystone", () => {
   let devstackConfig = config.clouds.devstack;
