@@ -43,15 +43,16 @@ export default class Glance extends AbstractService {
    * @param {{}} endpointConfig The configuration element for a specific glance endpoint.
    */
   constructor (endpointConfig) {
-    super();
-
     // Sanity checks.
     if (!endpointConfig || !endpointConfig.url) {
       throw new Error('An endpoint configuration is required.');
     }
     // Clone the config, so that this instance is immutable
     // at runtime (no modifying the config after the fact).
-    this._config = Object.assign({}, endpointConfig);
+    endpointConfig = Object.assign({}, endpointConfig);
+
+    super(endpointConfig.url, supportedGlanceVersions);
+    this._config = endpointConfig;
   }
 
   /**
@@ -74,37 +75,6 @@ export default class Glance extends AbstractService {
         return {};
       });
     return Promise.all([this.serviceEndpoint(), headerPromise]);
-  }
-
-  /**
-   * Retrieve all the API versions available.
-   *
-   * @returns {Promise.<T>} A promise that will resolve with the list of API versions.
-   */
-  versions () {
-    return this.http
-      .httpGet(this._config.url)
-      .then((response) => response.json())
-      .then((body) => body.versions);
-  }
-
-  /**
-   * Retrieve the API version declaration that is currently in use by this glance API.
-   *
-   * @returns {Promise.<T>} A promise that will resolve with the specific API version.
-   */
-  version () {
-    return this
-      .versions()
-      .then((versions) => {
-        const version = versions.find((element) => {
-          return supportedGlanceVersions.indexOf(element.id) > -1;
-        });
-        if (version) {
-          return version;
-        }
-        throw new Error("No supported Glance API version available.");
-      });
   }
 
   /**
