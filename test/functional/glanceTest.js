@@ -79,4 +79,22 @@ describe("Glance", () => {
         .catch((error) => done.fail(error));
     });
   });
+
+  describe("imageList()", () => {
+
+    /**
+     * Assert that we can get a list of images.
+     */
+    it("should return a supported version.", (done) => {
+      configPromise
+        .then((config) => new Glance(config))
+        .then((glance) => glance.imageList(tokenPromise))
+        .then((images) => {
+          expect(images.length > 0).toBeTruthy();
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+  });
+
 });
