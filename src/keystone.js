@@ -1,4 +1,4 @@
-import Http from './util/http';
+import AbstractService from './util/abstract_service';
 
 /**
  * A list of all supported versions. Please keep this array sorted by most recent.
@@ -10,7 +10,7 @@ const supportedKeystoneVersions = [
   'v3.7'
 ];
 
-export default class Keystone {
+export default class Keystone extends AbstractService {
 
   /**
    * This class provides direct, idempotent, low-level access to the Keystone API of a specific
@@ -23,6 +23,8 @@ export default class Keystone {
    * @see http://docs.openstack.org/developer/os-client-config/#site-specific-file-locations
    */
   constructor (cloudConfig) {
+    super();
+
     // Sanity checks.
     if (!cloudConfig) {
       throw new Error('A configuration is required.');
@@ -30,7 +32,6 @@ export default class Keystone {
     // Clone the config, so that this instance is immutable
     // at runtime (no modifying the config after the fact).
     this.cloudConfig = Object.assign({}, cloudConfig);
-    this.http = new Http();
   }
 
   /**

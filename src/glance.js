@@ -13,7 +13,7 @@
  * the License for the specific language governing permissions and limitations
  * under the License.
  */
-import Http from './util/http';
+import AbstractService from './util/abstract_service';
 
 /**
  * A list of all supported versions. Please keep this array sorted by most recent.
@@ -25,7 +25,7 @@ const supportedGlanceVersions = [
   'v2.3'
 ];
 
-export default class Glance {
+export default class Glance extends AbstractService {
 
   /**
    * This class provides direct, idempotent, low-level access to the Glance API of a specific
@@ -43,6 +43,8 @@ export default class Glance {
    * @param {{}} endpointConfig The configuration element for a specific glance endpoint.
    */
   constructor (endpointConfig) {
+    super();
+
     // Sanity checks.
     if (!endpointConfig || !endpointConfig.url) {
       throw new Error('An endpoint configuration is required.');
@@ -50,7 +52,6 @@ export default class Glance {
     // Clone the config, so that this instance is immutable
     // at runtime (no modifying the config after the fact).
     this._config = Object.assign({}, endpointConfig);
-    this.http = new Http();
   }
 
   /**
