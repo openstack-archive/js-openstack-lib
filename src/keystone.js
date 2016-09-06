@@ -59,30 +59,6 @@ export default class Keystone extends AbstractService {
   }
 
   /**
-   * This method builds common components of a keystone request. It converts any passed token
-   * into a promise, resolves the base URL, and then passes the results as an .all() promise,
-   * which may be destructured in a followup request.
-   *
-   * @param {Promise|String} token A promise, or string, representing a token.
-   * @returns {Promise} A promise which resolves with [url, token].
-   * @private
-   */
-  _requestComponents (token = null) {
-    // Make sure the token is a promise.
-    let headerPromise = Promise
-      .resolve(token)
-      .then((token) => {
-        if (token) {
-          return {
-            'X-Auth-Token': token
-          };
-        }
-        return {};
-      });
-    return Promise.all([this.serviceEndpoint(), headerPromise]);
-  }
-
-  /**
    * Retrieve all the API versions available.
    *
    * @returns {Promise.<T>} A promise that will resolve with the list of API versions.
@@ -90,29 +66,6 @@ export default class Keystone extends AbstractService {
   versions () {
     return super.versions()
       .then((versions) => versions.values);
-  }
-
-  /**
-   * Return the root API endpoint for the current supported keystone version.
-   *
-   * @returns {Promise.<T>|*} A promise which will resolve with the endpoint URL string.
-   */
-  serviceEndpoint () {
-    if (!this._endpointPromise) {
-      this._endpointPromise = this.version()
-        .then((version) => {
-          if (version.links) {
-            for (let i = 0; i < version.links.length; i++) {
-              let link = version.links[i];
-              if (link.rel === 'self' && link.href) {
-                return link.href;
-              }
-            }
-          }
-          throw new Error("No service endpoint discovered.");
-        });
-    }
-    return this._endpointPromise;
   }
 
   /**

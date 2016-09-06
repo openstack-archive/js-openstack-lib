@@ -56,51 +56,6 @@ export default class Glance extends AbstractService {
   }
 
   /**
-   * This method resolves any passed token into an appropriate header, as well as the base URL
-   * for the glance API. these variables may then be used to feed other requests.
-   *
-   * @param {Promise|String} token A promise, or string, representing a token.
-   * @returns {Promise} A promise which resolves with [url, token].
-   * @private
-   */
-  _requestComponents (token = null) {
-    // Make sure the token is a promise.
-    let headerPromise = new Promise((resolve) => resolve(token))
-      .then((token) => {
-        if (token) {
-          return {
-            'X-Auth-Token': token
-          };
-        }
-        return {};
-      });
-    return Promise.all([this.serviceEndpoint(), headerPromise]);
-  }
-
-  /**
-   * Return the root API endpoint for the current supported glance version.
-   *
-   * @returns {Promise.<T>|*} A promise which will resolve with the endpoint URL string.
-   */
-  serviceEndpoint () {
-    if (!this._endpointPromise) {
-      this._endpointPromise = this.version()
-        .then((version) => {
-          if (version.links) {
-            for (let i = 0; i < version.links.length; i++) {
-              let link = version.links[i];
-              if (link.rel === 'self' && link.href) {
-                return link.href;
-              }
-            }
-          }
-          throw new Error("No service endpoint discovered.");
-        });
-    }
-    return this._endpointPromise;
-  }
-
-  /**
    * List the images available on glance.
    *
    * @param {String} token An authorization token, or a promise which will resolve into one.
