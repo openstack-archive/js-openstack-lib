@@ -7,7 +7,8 @@ function getDevstackConfig() {
   const karmaConfig = karma.parseConfig(path.resolve('./karma.conf.js'));
 
   return getCorsConfig('$KEYSTONE_CONF', karmaConfig) +
-    getCorsConfig('$GLANCE_API_CONF', karmaConfig);
+    getCorsConfig('$GLANCE_API_CONF', karmaConfig) +
+    getCorsConfig('$NEUTRON_CONF', karmaConfig);
 
 }
 
