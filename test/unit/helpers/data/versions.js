@@ -23,6 +23,7 @@
  * URLs to match the test data below.
  */
 const rootUrl = "http://example.com/";
+const subUrl = `${rootUrl}/v1`;
 
 /**
  * A mock list of supported versions for the below requests.
@@ -36,7 +37,7 @@ const versions = [
 /**
  * Build a new FetchMock configuration for the versions (root) endpoint.
  *
- * @returns {{}} A full FetchMock configuration for Glance's Root Resource.
+ * @returns {{}} A full FetchMock configuration for a versions resource.
  */
 function rootResponse() {
   return {
@@ -109,8 +110,26 @@ function rootResponse() {
   };
 }
 
+/**
+ * FetchMock configuration for a 401 response against the versioned API url.
+ *
+ * @param {int} httpStatus The HTTP status for the response.
+ * @returns {{}} A full FetchMock configuration a failing request..
+ */
+function subResponse(httpStatus = 401) {
+  return {
+    method: 'GET',
+    matcher: subUrl,
+    response: {
+      status: httpStatus
+    }
+  };
+}
+
 export {
   rootUrl,
+  subUrl,
   versions,
-  rootResponse
+  rootResponse,
+  subResponse
 };

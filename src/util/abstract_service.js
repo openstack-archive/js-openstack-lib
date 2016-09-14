@@ -15,6 +15,7 @@
  */
 
 import Http from './http';
+import URL from 'url-parse';
 
 export default class AbstractService {
 
@@ -57,10 +58,26 @@ export default class AbstractService {
    * @returns {Promise.<T>} A promise that will resolve with the list of API versions.
    */
   versions () {
-    return this.http
-      .httpGet(this._endpointUrl)
-      .then((response) => response.json())
-      .then((body) => body.versions);
+    return new Promise((resolve, reject) => {
+      let promise = this.http
+        .httpGet(this._endpointUrl)
+        .catch((response) => {
+          if (response.status === 401) {
+            let rootUrl = new URL(this._endpointUrl);
+            rootUrl.set('pathname', '/');
+            rootUrl.set('query', '');
+            rootUrl.set('hash', '');
+
+            return this.http.httpGet(rootUrl.href);
+          } else {
+            return reject(response);
+          }
+        });
+
+      promise
+        .then((response) => response.json())
+        .then((body) => resolve(body.versions));
+    });
   }
 
   /**

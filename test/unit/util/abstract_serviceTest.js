@@ -73,6 +73,36 @@ describe('AbstractService', () => {
         .catch((error) => done.fail(error));
     });
 
+    // This test catches the case when the service catalog already points
+    // at an API version.
+    it("Should retry at the root URL if a 401 is encountered", (done) => {
+      const service = new AbstractService(mockData.subUrl, mockData.versions);
+
+      fetchMock.mock(mockData.subResponse());
+      fetchMock.mock(mockData.rootResponse());
+
+      service.versions()
+        .then((versions) => {
+          // Quick sanity check.
+          expect(versions.length).toBe(6);
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+
+    it("Should not retry at the root URL if a different status is encountered", (done) => {
+      const service = new AbstractService(mockData.subUrl, mockData.versions);
+
+      fetchMock.mock(mockData.subResponse(500));
+
+      service.versions()
+        .then((response) => done.fail(response))
+        .catch((error) => {
+          expect(error).not.toBeNull();
+          done();
+        });
+    });
+
     it("Should NOT cache its results", (done) => {
       const service = new AbstractService(mockData.rootUrl, mockData.versions);
       const mockOptions = mockData.rootResponse();
