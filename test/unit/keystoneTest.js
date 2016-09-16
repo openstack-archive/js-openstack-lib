@@ -12,15 +12,15 @@ describe('Keystone', () => {
   });
 
   it('should throw an error for an empty config', () => {
-    try {
-      const keystone = new Keystone();
-      keystone.tokenIssue();
-    } catch (e) {
-      expect(e.message).toEqual('A configuration is required.');
-    }
+    expect(() => new Keystone()).toThrow();
   });
 
   describe("versions()", () => {
+
+    /**
+     * Keystone needs an explicit test, as it uses a slightly different data format
+     * than other services.
+     */
     it("Should return a list of all versions available on this clouds' keystone", (done) => {
       const keystone = new Keystone(mockData.config);
 
@@ -30,25 +30,6 @@ describe('Keystone', () => {
         .then((versions) => {
           // Quick sanity check.
           expect(versions.length).toBe(2);
-          done();
-        })
-        .catch((error) => done.fail(error));
-    });
-
-    it("Should NOT cache its results", (done) => {
-      const keystone = new Keystone(mockData.config);
-      const mockOptions = mockData.root();
-
-      fetchMock.mock(mockOptions);
-
-      keystone.versions()
-        .then(() => {
-          // Validate that the mock has only been invoked once
-          expect(fetchMock.calls(mockOptions.name).length).toEqual(1);
-          return keystone.versions();
-        })
-        .then(() => {
-          expect(fetchMock.calls(mockOptions.name).length).toEqual(2);
           done();
         })
         .catch((error) => done.fail(error));
@@ -69,37 +50,17 @@ describe('Keystone', () => {
         })
         .catch((error) => done.fail(error));
     });
+  });
 
-    it("Should throw an exception if no supported version is found.", (done) => {
+  describe("serviceEndpoint()", () => {
+    it("Should return a valid endpoint to the keystone API.", (done) => {
       const keystone = new Keystone(mockData.config);
 
-      // Build an invalid mock object.
-      const mockOptions = mockData.root();
-      mockOptions.response.versions.values.shift();
+      fetchMock.mock(mockData.root());
 
-      fetchMock.mock(mockOptions);
-
-      keystone.version()
-        .then((response) => done.fail(response))
-        .catch((error) => {
-          expect(error).not.toBeNull();
-          done();
-        });
-    });
-
-    it("Should NOT cache its results", (done) => {
-      const keystone = new Keystone(mockData.config);
-      const mockOptions = mockData.root();
-      fetchMock.mock(mockOptions);
-
-      keystone.version()
-        .then(() => {
-          // Validate that the mock has only been invoked once
-          expect(fetchMock.calls(mockOptions.name).length).toEqual(1);
-          return keystone.version();
-        })
-        .then(() => {
-          expect(fetchMock.calls(mockOptions.name).length).toEqual(2);
+      keystone.serviceEndpoint()
+        .then((endpoint) => {
+          expect(endpoint).toEqual('http://192.168.99.99/identity_v2_admin/v3/');
           done();
         })
         .catch((error) => done.fail(error));
