@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import AbstractService from "../../../src/util/abstract_service";
+import AbstractService from "../../../src/util/abstractService";
 import * as mockData from "../helpers/data/versions";
 import fetchMock from "fetch-mock"; // Might as well use service
 

@@ -13,7 +13,7 @@
  * the License for the specific language governing permissions and limitations
  * under the License.
  */
-import AbstractService from './util/abstract_service';
+import AbstractService from './util/abstractService';
 
 /**
  * A list of all supported versions. Please keep this array sorted by most recent.
