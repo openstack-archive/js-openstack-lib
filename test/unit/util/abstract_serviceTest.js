@@ -15,8 +15,8 @@
  */
 
 import AbstractService from "../../../src/util/abstract_service";
-import * as mockData from '../helpers/data/versions'; // Might as well use keystone
-import fetchMock from "fetch-mock";
+import * as mockData from "../helpers/data/versions";
+import fetchMock from "fetch-mock"; // Might as well use service
 
 describe('AbstractService', () => {
 
@@ -168,6 +168,72 @@ describe('AbstractService', () => {
         })
         .then(() => {
           expect(fetchMock.calls(mockOptions.name).length).toEqual(2);
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+  });
+
+  describe("serviceEndpoint()", () => {
+
+    it("Should return a valid endpoint to the API.", (done) => {
+      const service = new AbstractService(mockData.rootUrl, mockData.versions);
+
+      fetchMock.mock(mockData.rootResponse());
+
+      service.serviceEndpoint()
+        .then((endpoint) => {
+          expect(endpoint).toEqual('http://example.com/v2/');
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+
+    it("Should throw an exception if no endpoint is provided.", (done) => {
+      const service = new AbstractService(mockData.rootUrl, mockData.versions);
+
+      // Build an exception payload.
+      const mockOptions = mockData.rootResponse();
+      mockOptions.response.versions[0].links = [];
+      fetchMock.mock(mockOptions);
+
+      service.serviceEndpoint()
+        .then((response) => done.fail(response))
+        .catch((error) => {
+          expect(error).not.toBeNull();
+          done();
+        });
+    });
+
+    it("Should throw an exception if no links array exists.", (done) => {
+      const service = new AbstractService(mockData.rootUrl, mockData.versions);
+
+      // Build an exception payload.
+      const mockOptions = mockData.rootResponse();
+      delete mockOptions.response.versions[0].links;
+      fetchMock.mock(mockOptions);
+
+      service.serviceEndpoint()
+        .then((response) => done.fail(response))
+        .catch((error) => {
+          expect(error).not.toBeNull();
+          done();
+        });
+    });
+
+    it("Should cache its results", (done) => {
+      const service = new AbstractService(mockData.rootUrl, mockData.versions);
+      const mockOptions = mockData.rootResponse();
+      fetchMock.mock(mockOptions);
+
+      service.serviceEndpoint()
+        .then(() => {
+          // Validate that the mock has only been invoked once
+          expect(fetchMock.calls(mockOptions.name).length).toEqual(1);
+          return service.serviceEndpoint();
+        })
+        .then(() => {
+          expect(fetchMock.calls(mockOptions.name).length).toEqual(1);
           done();
         })
         .catch((error) => done.fail(error));

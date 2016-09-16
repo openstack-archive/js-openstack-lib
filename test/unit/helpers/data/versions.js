@@ -23,7 +23,7 @@
  * URLs to match the test data below.
  */
 const rootUrl = "http://example.com/";
-const subUrl = `${rootUrl}/v1`;
+const subUrl = `${rootUrl}v1`;
 
 /**
  * A mock list of supported versions for the below requests.
@@ -50,7 +50,7 @@ function rootResponse() {
           id: "v2.3",
           links: [
             {
-              href: `${rootUrl}/v2/`,
+              href: `${rootUrl}v2/`,
               rel: "self"
             }
           ]
@@ -60,7 +60,7 @@ function rootResponse() {
           id: "v2.2",
           links: [
             {
-              href: `${rootUrl}/v2/`,
+              href: `${rootUrl}v2/`,
               rel: "self"
             }
           ]
@@ -70,7 +70,7 @@ function rootResponse() {
           id: "v2.1",
           links: [
             {
-              href: `${rootUrl}/v2/`,
+              href: `${rootUrl}v2/`,
               rel: "self"
             }
           ]
@@ -80,7 +80,7 @@ function rootResponse() {
           id: "v2.0",
           links: [
             {
-              href: `${rootUrl}/v2/`,
+              href: `${rootUrl}v2/`,
               rel: "self"
             }
           ]
@@ -90,7 +90,7 @@ function rootResponse() {
           id: "v1.1",
           links: [
             {
-              href: `${rootUrl}/v1/`,
+              href: `${rootUrl}v1/`,
               rel: "self"
             }
           ]
@@ -100,7 +100,7 @@ function rootResponse() {
           id: "v1.0",
           links: [
             {
-              href: `${rootUrl}/v1/`,
+              href: `${rootUrl}v1/`,
               rel: "self"
             }
           ]
