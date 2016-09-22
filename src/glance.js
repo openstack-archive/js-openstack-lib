@@ -42,7 +42,7 @@ export default class Glance extends AbstractService {
    * }
    * @param {{}} endpointConfig The configuration element for a specific glance endpoint.
    */
-  constructor (endpointConfig) {
+  constructor(endpointConfig) {
     // Sanity checks.
     if (!endpointConfig || !endpointConfig.url) {
       throw new Error('An endpoint configuration is required.');
@@ -61,7 +61,7 @@ export default class Glance extends AbstractService {
    * @param {String} token An authorization token, or a promise which will resolve into one.
    * @returns {Promise.<T>} A promise which will resolve with the list of images.
    */
-  imageList (token = null) {
+  imageList(token = null) {
     return this
       ._requestComponents(token)
       .then(([url, headers]) => this.http.httpRequest('GET', `${url}images`, headers))

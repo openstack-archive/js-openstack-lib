@@ -39,7 +39,7 @@ const cloudConfig = {
  *
  * @returns {{}} A full FetchMock configuration for Keystone's Root Resource.
  */
-function rootResponse () {
+function rootResponse() {
   return {
     method: 'GET',
     matcher: 'http://192.168.99.99/',
@@ -96,7 +96,7 @@ function rootResponse () {
   };
 }
 
-function tokenIssue () {
+function tokenIssue() {
   return {
     method: 'POST',
     matcher: 'http://192.168.99.99/identity_v2_admin/v3/auth/tokens',
@@ -375,7 +375,7 @@ function tokenIssue () {
   };
 }
 
-function tokenRevoke (token, adminToken = null) {
+function tokenRevoke(token, adminToken = null) {
   return {
     method: 'DELETE',
     matcher: 'http://192.168.99.99/identity_v2_admin/v3/auth/tokens',
@@ -389,7 +389,7 @@ function tokenRevoke (token, adminToken = null) {
   };
 }
 
-function catalogList (token) {
+function catalogList(token) {
   return {
     method: 'GET',
     matcher: 'http://192.168.99.99/identity_v2_admin/v3/auth/catalog',

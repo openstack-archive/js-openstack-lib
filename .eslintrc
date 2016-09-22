@@ -1,1 +1,6 @@
 extends: openstack/es2015
+
+rules:
+  space-before-function-paren:
+    - 2
+    - never

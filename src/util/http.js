@@ -41,14 +41,14 @@ export default class Http {
    *
    * @returns {{string: string}} A mapping of 'headerName': 'headerValue'
    */
-  get defaultHeaders () {
+  get defaultHeaders() {
     return this._defaultHeaders;
   }
 
   /**
    * Create a new HTTP handler.
    */
-  constructor () {
+  constructor() {
     // Add default response interceptors.
     this._defaultHeaders = {
       'Content-Type': 'application/json'
@@ -64,7 +64,7 @@ export default class Http {
    * @param {{}} body The body. It will be JSON-Encoded by the handler.
    * @returns {Promise} A promise which will resolve with the processed request response.
    */
-  httpRequest (method, url, headers = {}, body) {
+  httpRequest(method, url, headers = {}, body) {
 
     // Sanitize the headers...
     headers = Object.assign({}, headers, this.defaultHeaders);
@@ -106,7 +106,7 @@ export default class Http {
    * @param {String} url The request URL.
    * @returns {Promise} A promise which will resolve with the processed request response.
    */
-  httpGet (url) {
+  httpGet(url) {
     return this.httpRequest('GET', url, {}, null);
   }
 
@@ -117,7 +117,7 @@ export default class Http {
    * @param {{}} body The body. It will be JSON-Encoded by the handler.
    * @returns {Promise} A promise which will resolve with the processed request response.
    */
-  httpPut (url, body) {
+  httpPut(url, body) {
     return this.httpRequest('PUT', url, {}, body);
   }
 
@@ -128,7 +128,7 @@ export default class Http {
    * @param {{}} body The body. It will be JSON-Encoded by the handler.
    * @returns {Promise} A promise which will resolve with the processed request response.
    */
-  httpPost (url, body) {
+  httpPost(url, body) {
     return this.httpRequest('POST', url, {}, body);
   }
 
@@ -138,7 +138,7 @@ export default class Http {
    * @param {String} url The request URL.
    * @returns {Promise} A promise which will resolve with the processed request response.
    */
-  httpDelete (url) {
+  httpDelete(url) {
     return this.httpRequest('DELETE', url, {}, null);
   }
 }

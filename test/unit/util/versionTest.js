@@ -20,7 +20,7 @@ describe('Version', () => {
 
   it("should parse various header versions", () => {
 
-    const testVersion = function (args, results) {
+    const testVersion = function(args, results) {
       const v = new Version(...args);
       expect(v.service).toBe(results[0]);
       expect(v.major).toBe(results[1]);

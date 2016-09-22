@@ -25,7 +25,7 @@ export default class Version {
    *
    * @returns {String|*|null} The name of the service, or null.
    */
-  get service () {
+  get service() {
     return this._service || null;
   }
 
@@ -34,7 +34,7 @@ export default class Version {
    *
    * @returns {Number} The major version number
    */
-  get major () {
+  get major() {
     return this._major || 0;
   }
 
@@ -43,7 +43,7 @@ export default class Version {
    *
    * @returns {Number} The minor version number
    */
-  get minor () {
+  get minor() {
     return this._minor || 0;
   }
 
@@ -52,7 +52,7 @@ export default class Version {
    *
    * @returns {Number} The patch version number.
    */
-  get patch () {
+  get patch() {
     return this._patch || 0;
   }
 
@@ -62,7 +62,7 @@ export default class Version {
    * @param {String} service The name of the service.
    * @param {String} versionString The version string for this service.
    */
-  constructor (service, versionString) {
+  constructor(service, versionString) {
     // Sanitize input
     if (typeof service !== 'string') {
       service = undefined;
@@ -97,7 +97,7 @@ export default class Version {
    * @param {String|Version} version The version to compare to.
    * @returns {boolean} True if they are exactly the same, otherwise false.
    */
-  equals (version) {
+  equals(version) {
     if (!(version instanceof Version)) {
       // is it a parseable string?
       if (typeof version === 'string') {

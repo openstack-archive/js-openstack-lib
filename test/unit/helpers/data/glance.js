@@ -37,7 +37,7 @@ const glanceConfig = {
  *
  * @returns {{}} A full FetchMock configuration for Glance's Root Resource.
  */
-function rootResponse () {
+function rootResponse() {
   return {
     method: 'GET',
     matcher: 'http://192.168.99.99:9292/',
@@ -108,7 +108,7 @@ function rootResponse () {
   };
 }
 
-function imageList (token) {
+function imageList(token) {
   return {
     method: 'GET',
     matcher: 'http://192.168.99.99:9292/v2/images',

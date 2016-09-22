@@ -26,7 +26,7 @@ export default class AbstractService {
    * @param {string} endpointUrl The endpoint URL.
    * @param {Array} supportedVersions The list of all supported versions.
    */
-  constructor (endpointUrl, supportedVersions) {
+  constructor(endpointUrl, supportedVersions) {
     this._endpointUrl = endpointUrl;
     this._supportedVersions = supportedVersions;
   }
@@ -36,7 +36,7 @@ export default class AbstractService {
    *
    * @returns {Http} Our HTTP service instance.
    */
-  get http () {
+  get http() {
     if (!this._http) {
       this._http = new Http();
     }
@@ -48,7 +48,7 @@ export default class AbstractService {
    *
    * @returns {Array} The list of all supported versions, or empty array.
    */
-  get supportedVersions () {
+  get supportedVersions() {
     return this._supportedVersions || [];
   }
 
@@ -57,7 +57,7 @@ export default class AbstractService {
    *
    * @returns {Promise.<T>} A promise that will resolve with the list of API versions.
    */
-  versions () {
+  versions() {
     return new Promise((resolve, reject) => {
       let promise = this.http
         .httpGet(this._endpointUrl)
@@ -85,7 +85,7 @@ export default class AbstractService {
    *
    * @returns {Promise.<T>} A promise that will resolve with the specific API version.
    */
-  version () {
+  version() {
     return this
       .versions()
       .then((versions) => {
@@ -103,7 +103,7 @@ export default class AbstractService {
    *
    * @returns {Promise.<T>|*} A promise which will resolve with the endpoint URL string.
    */
-  serviceEndpoint () {
+  serviceEndpoint() {
     if (!this._endpointPromise) {
       this._endpointPromise = this.version()
         .then((version) => {
@@ -130,7 +130,7 @@ export default class AbstractService {
    * @returns {Promise} A promise which resolves with [url, token].
    * @private
    */
-  _requestComponents (token = null) {
+  _requestComponents(token = null) {
     // Make sure the token is a promise.
     let headerPromise = Promise
       .resolve(token)

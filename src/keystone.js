@@ -22,7 +22,7 @@ export default class Keystone extends AbstractService {
    * @param {{}} cloudConfig The configuration object for a specific cloud.
    * @see http://docs.openstack.org/developer/os-client-config/#site-specific-file-locations
    */
-  constructor (cloudConfig) {
+  constructor(cloudConfig) {
     // Sanity checks.
     if (!cloudConfig) {
       throw new Error('A configuration is required.');
@@ -44,7 +44,7 @@ export default class Keystone extends AbstractService {
    * @returns {String} The value found in the config, or null.
    * @ignore
    */
-  _safeConfigGet (path) {
+  _safeConfigGet(path) {
     let segments = path.split('.');
     let pointer = this.cloudConfig;
     while (segments.length > 0) {
@@ -63,7 +63,7 @@ export default class Keystone extends AbstractService {
    *
    * @returns {Promise.<T>} A promise that will resolve with the list of API versions.
    */
-  versions () {
+  versions() {
     return super.versions()
       .then((versions) => versions.values);
   }
@@ -84,7 +84,7 @@ export default class Keystone extends AbstractService {
    * @param {String} projectDomainName Domain name for the project, not required with project ID.
    * @returns {Promise.<T>} A promise which will resolve with a valid token.
    */
-  tokenIssue (username = this._safeConfigGet('auth.username'),
+  tokenIssue(username = this._safeConfigGet('auth.username'),
               password = this._safeConfigGet('auth.password'),
               projectName = this._safeConfigGet('auth.project_name'),
               userDomainName = this._safeConfigGet('auth.user_domain_id'),
@@ -141,7 +141,7 @@ export default class Keystone extends AbstractService {
    * @param {String} adminToken An optional admin token.
    * @returns {Promise.<T>} A promise which will resolve if the token has been successfully revoked.
    */
-  tokenRevoke (token, adminToken = null) {
+  tokenRevoke(token, adminToken = null) {
     return Promise
       .all([this.serviceEndpoint(), token, adminToken])
       .then(([url, token, adminToken]) => {
@@ -159,7 +159,7 @@ export default class Keystone extends AbstractService {
    * @param {String} token The authorization token.
    * @returns {Promise.<T>} A promise which will resolve with the service catalog.
    */
-  catalogList (token = null) {
+  catalogList(token = null) {
     return this
       ._requestComponents(token)
       .then(([url, headers]) => this.http.httpRequest('GET', `${url}auth/catalog`, headers))
