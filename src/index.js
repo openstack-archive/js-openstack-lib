@@ -1,10 +1,2 @@
-import 'isomorphic-fetch';
-
-export default class Test {
-  getUrl (url) {
-    return fetch(url)
-      .then((response) => {
-        return response;
-      });
-  }
-}
+export {default as Keystone} from './keystone';
+export {default as Glance} from './glance';
