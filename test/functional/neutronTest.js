@@ -80,4 +80,17 @@ describe("neutron", () => {
     });
   });
 
+  describe("networkList()", () => {
+    it("should return the networks as an array.", (done) => {
+      configPromise
+        .then((config) => new Neutron(config))
+        .then((neutron) => neutron.networkList(tokenPromise))
+        .then((networks) => {
+          expect(networks.length > 0).toBeTruthy();
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+  });
+
 });

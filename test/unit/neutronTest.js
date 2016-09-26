@@ -51,4 +51,45 @@ describe('neutron', () => {
         .catch((error) => done.fail(error));
     });
   });
+
+  describe("networkList()", () => {
+    let neutron = null;
+
+    beforeEach(() => {
+      fetchMock.mock(mockData.root());
+      neutron = new Neutron(mockData.config);
+    });
+
+    it("should return the networks as an array.", (done) => {
+      const token = 'test_token';
+
+      fetchMock.mock(mockData.networkList(token));
+      neutron
+        .networkList(token)
+        .then((networks) => {
+          expect(networks.length).toBe(2);
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+
+    it("Should not cache its results", (done) => {
+      const token = 'test_token';
+
+      let mockOptions = mockData.networkList(token);
+      fetchMock.mock(mockOptions);
+
+      neutron
+        .networkList(token)
+        .then(() => {
+          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(1);
+          return neutron.networkList(token);
+        })
+        .then(() => {
+          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(2);
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+  });
 });

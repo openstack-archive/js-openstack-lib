@@ -50,6 +50,10 @@ allowed_origin=http://localhost:9876
 [[post-config|\$GLANCE_API_CONF]]
 [cors]
 allowed_origin=http://localhost:9876
+
+[[post-config|\$NEUTRON_CONF]]
+[cors]
+allowed_origin=http://localhost:9876
 EOL
 
 # Start devstack.

@@ -53,4 +53,18 @@ export default class Neutron extends AbstractService {
 
     super(endpointConfig.url, supportedNeutronVersions);
   }
+
+  /**
+   * List the networks available on neutron.
+   *
+   * @param {String} token An authorization token, or a promise which will resolve into one.
+   * @returns {Promise.<T>} A promise which will resolve with the list of networks.
+   */
+  networkList(token = null) {
+    return this
+      ._requestComponents(token)
+      .then(([url, headers]) => this.http.httpRequest('GET', `${url}/networks`, headers))
+      .then((response) => response.json())
+      .then((body) => body.networks);
+  }
 }
