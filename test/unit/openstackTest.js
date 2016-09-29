@@ -1,4 +1,4 @@
-import OpenStack from "../../src/index";
+import OpenStack from "../../src/openstack";
 import * as mockData from './helpers/data/openstack';
 
 const FetchMock = require('fetch-mock');
