@@ -169,6 +169,25 @@ export default class Keystone extends AbstractService {
   }
 
   /**
+   * Get information about a token.
+   *
+   * @param {String} token The authorization token.
+   * @returns {Promise.<T>} A promise which will resolve with information about the token.
+   */
+  tokenInfo(token) {
+    return Promise
+      .all([this.serviceEndpoint(), token])
+      .then(([url, token]) => {
+        return [url, {
+          'X-Subject-Token': token,
+          'X-Auth-Token': token
+        }];
+      })
+      .then(([url, headers]) => this.http.httpRequest('GET', `${url}auth/tokens`, headers))
+      .then((response) => response.json());
+  }
+
+  /**
    * List the service catalog for the configured cloud.
    *
    * @param {String} token The authorization token.

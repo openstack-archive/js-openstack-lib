@@ -194,38 +194,71 @@ describe("Keystone", () => {
           done();
         });
     });
+  });
 
-    describe("catalogList()", () => {
-      let keystone = null;
+  describe("tokenInfo()", () => {
+    let keystone = null;
 
-      beforeEach(() => {
-        keystone = new Keystone(config.clouds.devstack);
-      });
+    beforeEach(() => {
+      keystone = new Keystone(config.clouds.devstack);
+    });
 
-      it("should list a catalog.", (done) => {
-        keystone
-          .tokenIssue()
-          .then((token) => {
-            return keystone.catalogList(token);
-          })
-          .then((catalog) => {
-            expect(catalog.length).not.toBe(0);
-            done();
-          })
-          .catch((response) => response.json()
-            .then((body) => done.fail(JSON.stringify(body)))
-          );
-      });
+    it("should retrieve info about a token.", (done) => {
+      keystone
+        .tokenIssue()
+        .then((token) => {
+          return keystone.tokenInfo(token);
+        })
+        .then((info) => {
+          expect('token' in info).toBe(true);
+          done();
+        })
+        .catch((response) => response.json()
+          .then((body) => done.fail(JSON.stringify(body)))
+        );
+    });
 
-      it("should error if not authenticated.", (done) => {
-        keystone
-          .catalogList()
-          .then((response) => done.fail(response))
-          .catch((error) => {
-            expect(error).not.toBeNull();
-            done();
-          });
-      });
+    it("should throw an exception if invalid token is provided.", (done) => {
+      keystone
+        .tokenRevoke('not_a_valid_token')
+        .then((response) => done.fail(response))
+        .catch((error) => {
+          expect(error).not.toBeNull();
+          done();
+        });
+    });
+  });
+
+  describe("catalogList()", () => {
+    let keystone = null;
+
+    beforeEach(() => {
+      keystone = new Keystone(config.clouds.devstack);
+    });
+
+    it("should list a catalog.", (done) => {
+      keystone
+        .tokenIssue()
+        .then((token) => {
+          return keystone.catalogList(token);
+        })
+        .then((catalog) => {
+          expect(catalog.length).not.toBe(0);
+          done();
+        })
+        .catch((response) => response.json()
+          .then((body) => done.fail(JSON.stringify(body)))
+        );
+    });
+
+    it("should error if not authenticated.", (done) => {
+      keystone
+        .catalogList()
+        .then((response) => done.fail(response))
+        .catch((error) => {
+          expect(error).not.toBeNull();
+          done();
+        });
     });
   });
 });

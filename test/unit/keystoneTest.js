@@ -285,6 +285,47 @@ describe('Keystone', () => {
     });
   });
 
+  describe("tokenInfo()", () => {
+    let keystone = null;
+
+    beforeEach(() => {
+      fetchMock.mock(mockData.root());
+      keystone = new Keystone(mockData.config);
+    });
+
+    const token = 'test_token';
+
+    it("should return information about a token", (done) => {
+      fetchMock.mock(mockData.tokenInfo(token));
+      keystone
+        .tokenInfo(token)
+        .then((info) => {
+          expect(info.token).toBeDefined();
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+
+    it("Should not cache its results", (done) => {
+      let mockOptions = mockData.tokenInfo(token);
+      fetchMock.mock(mockOptions);
+
+      keystone
+        .tokenInfo(token)
+        .then((info) => {
+          expect(info.token).toBeDefined();
+          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(1);
+          return keystone.tokenInfo(token);
+        })
+        .then((info) => {
+          expect(info.token).toBeDefined();
+          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(2);
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+  });
+
   describe("catalogList()", () => {
     let keystone = null;
 
