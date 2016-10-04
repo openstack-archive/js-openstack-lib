@@ -91,11 +91,11 @@ describe('Glance', () => {
       glance
         .imageList(token)
         .then(() => {
-          expect(fetchMock.calls(mockOptions.name).length).toEqual(1);
+          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(1);
           return glance.imageList(token);
         })
         .then(() => {
-          expect(fetchMock.calls(mockOptions.name).length).toEqual(2);
+          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(2);
           done();
         })
         .catch((error) => done.fail(error));

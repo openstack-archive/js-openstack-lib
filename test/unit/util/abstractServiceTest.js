@@ -112,11 +112,11 @@ describe('AbstractService', () => {
       service.versions()
         .then(() => {
           // Validate that the mock has only been invoked once
-          expect(fetchMock.calls(mockOptions.name).length).toEqual(1);
+          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(1);
           return service.versions();
         })
         .then(() => {
-          expect(fetchMock.calls(mockOptions.name).length).toEqual(2);
+          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(2);
           done();
         })
         .catch((error) => done.fail(error));
@@ -163,11 +163,11 @@ describe('AbstractService', () => {
       service.version()
         .then(() => {
           // Validate that the mock has only been invoked once
-          expect(fetchMock.calls(mockOptions.name).length).toEqual(1);
+          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(1);
           return service.version();
         })
         .then(() => {
-          expect(fetchMock.calls(mockOptions.name).length).toEqual(2);
+          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(2);
           done();
         })
         .catch((error) => done.fail(error));
@@ -229,11 +229,11 @@ describe('AbstractService', () => {
       service.serviceEndpoint()
         .then(() => {
           // Validate that the mock has only been invoked once
-          expect(fetchMock.calls(mockOptions.name).length).toEqual(1);
+          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(1);
           return service.serviceEndpoint();
         })
         .then(() => {
-          expect(fetchMock.calls(mockOptions.name).length).toEqual(1);
+          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(1);
           done();
         })
         .catch((error) => done.fail(error));

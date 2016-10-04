@@ -92,12 +92,12 @@ describe('Keystone', () => {
         .tokenIssue()
         .then((token) => {
           expect(token).toEqual('test_token'); // From mock data
-          expect(fetchMock.calls(mockOptions.name).length).toEqual(1);
+          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(1);
           return keystone.tokenIssue();
         })
         .then((token) => {
           expect(token).toEqual('test_token'); // From mock data
-          expect(fetchMock.calls(mockOptions.name).length).toEqual(2);
+          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(2);
           done();
         })
         .catch((error) => done.fail(error));
@@ -136,7 +136,7 @@ describe('Keystone', () => {
         .tokenRevoke(token)
         .then((response) => {
           expect(response.status).toEqual(204);
-          expect(fetchMock.calls(mockOptions.name).length).toEqual(1);
+          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(1);
 
           // Yes, I realize that this should actually return an error since the token is no
           // longer valid, but we're testing for promise caching here, not valid http flow.
@@ -144,7 +144,7 @@ describe('Keystone', () => {
         })
         .then((response) => {
           expect(response.status).toEqual(204);
-          expect(fetchMock.calls(mockOptions.name).length).toEqual(2);
+          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(2);
           done();
         })
         .catch((error) => done.fail(error));
@@ -181,11 +181,11 @@ describe('Keystone', () => {
       keystone
         .catalogList(token)
         .then(() => {
-          expect(fetchMock.calls(mockOptions.name).length).toEqual(1);
+          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(1);
           return keystone.catalogList(token);
         })
         .then(() => {
-          expect(fetchMock.calls(mockOptions.name).length).toEqual(2);
+          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(2);
           done();
         })
         .catch((error) => done.fail(error));
