@@ -70,13 +70,147 @@ describe('Keystone', () => {
   describe("tokenIssue()", () => {
 
     it("should 'just work' by using provided credentials from the config.", (done) => {
+      let mockOptions = mockData.tokenIssue();
       fetchMock.mock(mockData.root());
-      fetchMock.mock(mockData.tokenIssue());
+      fetchMock.mock(mockOptions);
+
       const keystone = new Keystone(mockData.config);
       keystone
         .tokenIssue()
         .then((token) => {
           expect(token).toEqual('test_token'); // From mock data
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+
+    it("should support authentication with a user ID", (done) => {
+      let mockOptions = mockData.tokenIssue();
+      fetchMock.mock(mockData.root());
+      fetchMock.mock(mockOptions);
+
+      const userId = 'userId';
+
+      const keystone = new Keystone(mockData.config);
+      keystone
+        .tokenIssue({
+          user_id: userId
+        })
+        .then(() => {
+          const requestBody = JSON.parse(fetchMock.lastCall(mockOptions.matcher)[1].body);
+          expect(requestBody.auth.identity.password.user.id).toEqual(userId);
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+
+    it("should support authentication with a username and a user domain ID", (done) => {
+      let mockOptions = mockData.tokenIssue();
+      fetchMock.mock(mockData.root());
+      fetchMock.mock(mockOptions);
+
+      const username = 'username';
+      const userDomainId = 'userDomainId';
+
+      const keystone = new Keystone(mockData.config);
+      keystone
+        .tokenIssue({
+          username: username,
+          user_domain_id: userDomainId
+        })
+        .then(() => {
+          const requestBody = JSON.parse(fetchMock.lastCall(mockOptions.matcher)[1].body);
+          expect(requestBody.auth.identity.password.user.name).toEqual(username);
+          expect(requestBody.auth.identity.password.user.domain.id).toEqual(userDomainId);
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+
+    it("should support authentication with a username and a user domain name", (done) => {
+      let mockOptions = mockData.tokenIssue();
+      fetchMock.mock(mockData.root());
+      fetchMock.mock(mockOptions);
+
+      const username = 'username';
+      const userDomainName = 'userDomainName';
+
+      const keystone = new Keystone(mockData.config);
+      keystone
+        .tokenIssue({
+          username: username,
+          user_domain_name: userDomainName
+        })
+        .then(() => {
+          const requestBody = JSON.parse(fetchMock.lastCall(mockOptions.matcher)[1].body);
+          expect(requestBody.auth.identity.password.user.name).toEqual(username);
+          expect(requestBody.auth.identity.password.user.domain.name).toEqual(userDomainName);
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+
+    it("should support authentication with a project ID", (done) => {
+      let mockOptions = mockData.tokenIssue();
+      fetchMock.mock(mockData.root());
+      fetchMock.mock(mockOptions);
+
+      const projectId = 'projectId';
+
+      const keystone = new Keystone(mockData.config);
+      keystone
+        .tokenIssue({
+          project_id: projectId,
+        })
+        .then(() => {
+          const requestBody = JSON.parse(fetchMock.lastCall(mockOptions.matcher)[1].body);
+          expect(requestBody.auth.scope.project.id).toEqual(projectId);
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+
+    it("should support authentication with a project name and a project domain ID", (done) => {
+      let mockOptions = mockData.tokenIssue();
+      fetchMock.mock(mockData.root());
+      fetchMock.mock(mockOptions);
+
+      const projectName = 'projectName';
+      const projectDomainId = 'projectDomainId';
+
+      const keystone = new Keystone(mockData.config);
+      keystone
+        .tokenIssue({
+          project_name: projectName,
+          project_domain_id: projectDomainId
+        })
+        .then(() => {
+          const requestBody = JSON.parse(fetchMock.lastCall(mockOptions.matcher)[1].body);
+          expect(requestBody.auth.scope.project.name).toEqual(projectName);
+          expect(requestBody.auth.scope.project.domain.id).toEqual(projectDomainId);
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+
+    it("should support authentication with a project name and a project domain name", (done) => {
+      let mockOptions = mockData.tokenIssue();
+      fetchMock.mock(mockData.root());
+      fetchMock.mock(mockOptions);
+
+      const projectName = 'projectName';
+      const projectDomainName = 'projectDomainName';
+
+      const keystone = new Keystone(mockData.config);
+      keystone
+        .tokenIssue({
+          project_name: projectName,
+          project_domain_name: projectDomainName
+        })
+        .then(() => {
+          const requestBody = JSON.parse(fetchMock.lastCall(mockOptions.matcher)[1].body);
+          expect(requestBody.auth.scope.project.name).toEqual(projectName);
+          expect(requestBody.auth.scope.project.domain.name).toEqual(projectDomainName);
           done();
         })
         .catch((error) => done.fail(error));

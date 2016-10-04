@@ -70,61 +70,76 @@ export default class Keystone extends AbstractService {
 
   /**
    * Issue a token from the provided credentials. Credentials will be read from the
-   * configuration, unless they have been explicitly provided. Note that both the userDomainName
-   * and the projectDomainName are only required if the user/project names are given, rather
-   * than the explicit user/domain ID's.
+   * configuration, unless they have been explicitly provided.
    *
    * NOTE: This method is only applicable if the password auth plugin on keystone is enabled.
    * Other auth methods will have to be provided by third-party developers.
    *
-   * @param {String} username An optional user name or ID.
-   * @param {String} password An optional password.
-   * @param {String} projectName An optional project name or ID.
-   * @param {String} userDomainName Domain name for the user, not required if a user id is given.
-   * @param {String} projectDomainName Domain name for the project, not required with project ID.
+   * @param {Object} credentials Optional credentials.
+   * @param {String} credentials.user_id An optional user ID.
+   * @param {String} credentials.username An optional user name.
+   * @param {String} credentials.password An optional password.
+   * @param {String} credentials.user_domain_id An optional user domain ID.
+   *   Not required if a user ID is given.
+   * @param {String} credentials.user_domain_name An optional user domain name.
+   *   Not required if a user ID is given.
+   * @param {String} credentials.project_id An optional project ID.
+   * @param {String} credentials.project_name An optional project name.
+   * @param {String} credentials.project_domain_id An optional project domain ID.
+   *   Not required if a project ID is given.
+   * @param {String} credentials.project_domain_name An optional project domain name.
+   *   Not required if a project ID is given.
    * @returns {Promise.<T>} A promise which will resolve with a valid token.
    */
-  tokenIssue(username = this._safeConfigGet('auth.username'),
-              password = this._safeConfigGet('auth.password'),
-              projectName = this._safeConfigGet('auth.project_name'),
-              userDomainName = this._safeConfigGet('auth.user_domain_id'),
-              projectDomainName = this._safeConfigGet('auth.project_domain_id')) {
+  tokenIssue({
+    user_id: userId = this._safeConfigGet('auth.user_id'),
+    username = this._safeConfigGet('auth.username'),
+    password = this._safeConfigGet('auth.password'),
+    user_domain_id: userDomainId = this._safeConfigGet('auth.user_domain_id'),
+    user_domain_name: userDomainName = this._safeConfigGet('auth.user_domain_name'),
+    project_id: projectId = this._safeConfigGet('auth.project_id'),
+    project_name: projectName = this._safeConfigGet('auth.project_name'),
+    project_domain_id: projectDomainId = this._safeConfigGet('auth.project_domain_id'),
+    project_domain_name: projectDomainName = this._safeConfigGet('auth.project_domain_name')
+  } = {}) {
+    let project;
+    let user = {password};
+
+    if (userId) {
+      user.id = userId;
+    } else if (username) {
+      user.name = username;
+      if (userDomainId) {
+        user.domain = {id: userDomainId};
+      } else if (userDomainName) {
+        user.domain = {name: userDomainName};
+      } else {
+        user.domain = {id: 'default'};
+      }
+    }
+
+    if (projectId) {
+      project = {id: projectId};
+    } else if (projectName) {
+      project = {name: projectName};
+      if (projectDomainId) {
+        project.domain = {id: projectDomainId};
+      } else if (projectDomainName) {
+        project.domain = {name: projectDomainName};
+      } else {
+        project.domain = {id: 'default'};
+      }
+    }
 
     const body = {
       auth: {
         identity: {
           methods: ['password'],
-          password: {
-            user: {
-              name: username,
-              password: password
-            }
-          }
-        }
+          password: {user}
+        },
+        scope: project ? {project} : 'unscoped'
       }
     };
-
-    if (userDomainName) {
-      body.auth.identity.password.user.domain = {
-        id: userDomainName
-      };
-    }
-
-    if (!projectName) {
-      body.auth.scope = "unscoped";
-    } else {
-      body.auth.scope = {
-        project: {
-          name: projectName
-        }
-      };
-
-      if (projectDomainName) {
-        body.auth.scope.project.domain = {
-          id: projectDomainName
-        };
-      }
-    }
 
     return this
       .serviceEndpoint()
