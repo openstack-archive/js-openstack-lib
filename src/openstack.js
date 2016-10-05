@@ -1,3 +1,6 @@
+import Keystone from "./keystone";
+import Neutron from "./neutron";
+
 export default class OpenStack {
   /**
    * Create wrapper class that takes clouds.yaml instance
@@ -15,8 +18,75 @@ export default class OpenStack {
 
     this.cloudConfig = cloudConfig;
   }
+
   getConfig() {
     // Returns the config instance
     return this.cloudConfig;
   }
+
+  /**
+   * List the networks available.
+   *
+   * @returns {Promise.<T>} A promise which will resolve with the list of networks.
+   */
+  networkList() {
+    return this._neutron
+      .then((neutron) => neutron.networkList(this._token));
+  }
+
+  /**
+   * Keystone component.
+   *
+   * @returns {Promise.<Keystone>} A promise which will resolve with Keystone instance.
+   * @private
+   */
+  get _keystone() {
+    if (!this._keystonePromise) {
+      this._keystonePromise = Promise.resolve(new Keystone(this.getConfig()));
+    }
+
+    return this._keystonePromise;
+  }
+
+  /**
+   * Neutron component.
+   *
+   * @returns {Promise.<Neutron>} A promise which will resolve with Neutron instance.
+   * @private
+   */
+  get _neutron() {
+    if (!this._neutronPromise) {
+      this._neutronPromise = this._getComponentConfigFor('neutron')
+        .then((componentConfig) => new Neutron(componentConfig));
+    }
+    return this._neutronPromise;
+  }
+
+  /**
+   * Token issued from Keystone.
+   *
+   * @returns {Promise.<T>} A promise which will resolve with the token.
+   * @private
+   */
+  get _token() {
+    if (!this._tokenPromise) {
+      this._tokenPromise = this._keystone.then((k) => k.tokenIssue());
+    }
+    return this._tokenPromise;
+  }
+
+  /**
+   * Return an component config from keystone catalog.
+   *
+   * @param {String} name A component name to find.
+   * @returns {Promise.<{}>} A promise which will resolve with the component config.
+   * @private
+   */
+  _getComponentConfigFor(name) {
+    return this._token
+      .then((token) => this._keystone.then((keystone) => keystone.catalogList(token)))
+      .then((catalog) => catalog.find((entry) => entry.name === name))
+      .then((entry) => entry.endpoints.find((endpoint) => endpoint.interface === 'public'));
+  }
+
 }

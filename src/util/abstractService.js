@@ -53,6 +53,15 @@ export default class AbstractService {
   }
 
   /**
+   * Our endpoint URL for this service.
+   *
+   * @returns {string} The URL of our service.
+   */
+  get endpointUrl() {
+    return this._endpointUrl;
+  }
+
+  /**
    * Retrieve all the API versions available.
    *
    * @returns {Promise.<T>} A promise that will resolve with the list of API versions.
