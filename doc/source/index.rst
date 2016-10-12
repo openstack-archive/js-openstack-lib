@@ -18,6 +18,7 @@ Topics
    reference_documentation
    dev_get_started
    specs
+   releasing
 
 
 .. _gerrit: https://review.openstack.org/#/q/status:open+AND+project:openstack/js-openstack-lib,n,z
