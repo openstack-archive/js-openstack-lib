@@ -94,12 +94,7 @@ describe("Keystone", () => {
 
     it("should permit passing your own user, password, and project.", (done) => {
       keystone
-        .tokenIssue(
-          adminConfig.auth.username,
-          adminConfig.auth.password,
-          adminConfig.auth.project_name,
-          adminConfig.auth.user_domain_id,
-          adminConfig.auth.project_domain_id)
+        .tokenIssue(adminConfig.auth)
         .then((token) => {
           expect(token).not.toBeNull();
           done();
@@ -109,9 +104,38 @@ describe("Keystone", () => {
         );
     });
 
-    it("should throw an exception if invalid credentials are provided.", (done) => {
+    it("should throw an exception if invalid username and password are provided.", (done) => {
       keystone
-        .tokenIssue('foo', 'bar', 'lolProject', 'notADomain', 'notADomain')
+        .tokenIssue({
+          username: 'foo',
+          password: 'bar'
+        })
+        .then((token) => done.fail(token))
+        .catch((error) => {
+          expect(error).not.toBeNull();
+          done();
+        });
+    });
+
+    it("should throw an exception if invalid project is provided.", (done) => {
+      keystone
+        .tokenIssue({
+          project_id: 'foo',
+          project_name: 'bar'
+        })
+        .then((token) => done.fail(token))
+        .catch((error) => {
+          expect(error).not.toBeNull();
+          done();
+        });
+    });
+
+    it("should throw an exception if invalid user domain is provided.", (done) => {
+      keystone
+        .tokenIssue({
+          user_domain_id: 'foo',
+          user_domain_name: 'bar'
+        })
         .then((token) => done.fail(token))
         .catch((error) => {
           expect(error).not.toBeNull();
