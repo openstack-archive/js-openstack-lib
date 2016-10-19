@@ -1,6 +1,6 @@
 {
   "name": "openstack-lib",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "JavaScript API library for OpenStack.",
   "main": "dist/index.js",
   "scripts": {
