@@ -22,16 +22,21 @@
 /**
  * Mock cloud configuration that matches our test data below. This is not a full clouds.yaml
  * format, rather just the subsection pointing to a particular cloud.
+ * @param {String} regionName A region name to use
+ * @returns {{}} a cloud config object.
  */
-const cloudConfig = {
-  region_name: 'Region1',
-  auth: {
-    username: 'user',
-    password: 'pass',
-    project_name: 'js-openstack-lib',
-    auth_url: 'http://192.168.99.99/'
-  }
-};
+function cloudConfig(regionName = 'RegionOne') {
+  return {
+    region_name: regionName,
+    auth: {
+      username: 'user',
+      password: 'pass',
+      project_name: 'js-openstack-lib',
+      auth_url: 'http://192.168.99.99/'
+    }
+  };
+}
+
 export {
   cloudConfig as config,
 };

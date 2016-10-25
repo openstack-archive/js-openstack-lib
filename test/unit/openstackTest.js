@@ -11,7 +11,7 @@ describe("Simple test", () => {
   afterEach(fetchMock.restore);
 
   it("should export a class", () => {
-    let t = new OpenStack(openStackMockData.config);
+    let t = new OpenStack(openStackMockData.config());
     expect(t).toBeDefined();
   });
 
@@ -25,14 +25,14 @@ describe("Simple test", () => {
   });
 
   it("getConfig should returns the config", () => {
-    let openstack = new OpenStack(openStackMockData.config);
+    let openstack = new OpenStack(openStackMockData.config());
     let config = openstack.getConfig();
-    expect(config.region_name).toEqual('Region1');
+    expect(config.region_name).toEqual('RegionOne');
   });
 
   describe('networkList', () => {
     it('should fetch networkList from neutron', (done) => {
-      const openstack = new OpenStack(openStackMockData.config);
+      const openstack = new OpenStack(openStackMockData.config());
       const neutron = mockNeutron(openstack);
       const networksData = neutronMockData.networkList('token').response.networks;
 
@@ -50,7 +50,7 @@ describe("Simple test", () => {
   describe('_neutron', () => {
     it('creates Neutron instance with the correct endpoint', (done) => {
       const token = 'test_token';
-      const openstack = new OpenStack(openStackMockData.config);
+      const openstack = new OpenStack(openStackMockData.config());
       const keystone = mockKeystone(openstack);
       const catalogData = keystoneMockData.catalogList(token).response.catalog;
 
@@ -67,8 +67,26 @@ describe("Simple test", () => {
         .catch((error) => done.fail(error));
     });
 
+    it('creates Neutron instance for the correct endpoint', (done) => {
+      const token = 'test_token';
+      const openstack = new OpenStack(openStackMockData.config('RegionTwo'));
+      const keystone = mockKeystone(openstack);
+      const catalogData = keystoneMockData.catalogList(token).response.catalog;
+
+      spyOn(keystone, 'tokenIssue').and.returnValue(Promise.resolve(token));
+      spyOn(keystone, 'catalogList').and.returnValue(Promise.resolve(catalogData));
+
+      openstack._neutron
+        .then((neutron) => {
+          expect(neutron).toEqual(jasmine.any(Neutron));
+          expect(neutron.endpointUrl).toEqual('http://192.168.99.100:9696/');
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+
     it('should cache Neutron instance and Keystone token', (done) => {
-      const openstack = new OpenStack(openStackMockData.config);
+      const openstack = new OpenStack(openStackMockData.config());
       const tokenIssueMock = keystoneMockData.tokenIssue();
       const catalogListMock = keystoneMockData.catalogList('test_token');
 
@@ -95,7 +113,7 @@ describe("Simple test", () => {
 
   describe('_token', () => {
     it('should fetch the token and cache it', (done) => {
-      const openstack = new OpenStack(openStackMockData.config);
+      const openstack = new OpenStack(openStackMockData.config());
       const keystone = mockKeystone(openstack);
 
       spyOn(keystone, 'tokenIssue').and.returnValue(Promise.resolve('test_token'));

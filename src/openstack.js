@@ -83,10 +83,13 @@ export default class OpenStack {
    * @private
    */
   _getComponentConfigFor(name) {
+    const config = this.getConfig();
     return this._token
       .then((token) => this._keystone.then((keystone) => keystone.catalogList(token)))
       .then((catalog) => catalog.find((entry) => entry.name === name))
-      .then((entry) => entry.endpoints.find((endpoint) => endpoint.interface === 'public'));
+      .then((entry) => entry.endpoints.find((endpoint) => {
+        return endpoint.region === config.region_name && endpoint.interface === 'public';
+      }));
   }
 
 }

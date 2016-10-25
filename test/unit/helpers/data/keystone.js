@@ -253,6 +253,27 @@ const catalogListData = [
         region: "RegionOne",
         interface: "admin",
         id: "bd8db1bafe41489bbbc45641e525ee7d"
+      },
+      {
+        region_id: "RegionTwo",
+        url: "http://192.168.99.100:9696/",
+        region: "RegionTwo",
+        interface: "public",
+        id: "7033fa4ebed74e3fa51753162150a1f2"
+      },
+      {
+        region_id: "RegionTwo",
+        url: "http://192.168.99.100:9696/",
+        region: "RegionOne",
+        interface: "RegionTwo",
+        id: "7aa942d402a34d4c90454b9d84285855"
+      },
+      {
+        region_id: "RegionTwo",
+        url: "http://192.168.99.100:9696/",
+        region: "RegionTwo",
+        interface: "admin",
+        id: "bd8db1bafe41489bbbc45641e525ee7d"
       }
     ],
     type: "network",
