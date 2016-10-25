@@ -16,14 +16,15 @@ import datetime
 import os
 import sys
 
+import openstackdocstheme
+
 sys.path.insert(0, os.path.abspath('../..'))
 # -- General configuration ----------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
-    'sphinx.ext.autodoc',
-    'oslosphinx'
+    'sphinx.ext.autodoc'
 ]
 
 exclude_patterns = [
@@ -52,6 +53,24 @@ master_doc = 'index'
 project = u'js-openstack-lib'
 copyright = u'%s, OpenStack Foundation' % datetime.date.today().year
 
+# A few variables have to be set for the log-a-bug feature.
+#   giturl: The location of conf.py on Git. Must be set manually.
+#   gitsha: The SHA checksum of the bug description. Extracted from git log.
+#   bug_tag: Tag for categorizing the bug. Must be set manually.
+#   bug_project: Launchpad project to file bugs against.
+# These variables are passed to the logabug code via html_context.
+giturl = u'http://git.openstack.org/cgit/openstack/js-openstack-lib/tree/doc/source'
+git_cmd = "/usr/bin/git log | head -n1 | cut -f2 -d' '"
+gitsha = os.popen(git_cmd).read().strip('\n')
+bug_tag = "docs"
+# source tree
+pwd = os.getcwd()
+# html_context allows us to pass arbitrary values into the html template
+html_context = {"pwd": pwd,
+                "gitsha": gitsha,
+                "bug_tag": bug_tag,
+                "giturl": giturl}
+
 # If true, '()' will be appended to :func: etc. cross-reference text.
 add_function_parentheses = True
 
@@ -64,11 +83,12 @@ pygments_style = 'sphinx'
 
 # -- Options for HTML output --------------------------------------------------
 
-# The theme to use for HTML and HTML Help pages.  Major themes that come with
-# Sphinx are currently 'default' and 'sphinxdoc'.
-# html_theme_path = ["."]
-# html_theme = '_theme'
-# html_static_path = ['static']
+# The theme to use for HTML and HTML Help pages.  See the documentation for
+# a list of builtin themes.
+html_theme = 'openstackdocs'
+
+# Add any paths that contain custom themes here, relative to this directory.
+html_theme_path = [openstackdocstheme.get_html_theme_path()]
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = '%sdoc' % project
