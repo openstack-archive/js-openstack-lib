@@ -19,6 +19,10 @@ reports
 package
 dist
 www
+build
+doc/source/jsdoc
+*-compiled.js
+*.js.map
 *.tgz
 .vagrant
 
@@ -39,7 +43,3 @@ clouds.yaml
 
 # OS-specific
 .DS_Store
-
-# Doc build
-doc/build
-doc/source/jsdoc
