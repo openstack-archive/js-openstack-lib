@@ -1,5 +1,6 @@
 import Keystone from "./keystone";
 import Neutron from "./neutron";
+import Glance from "./glance";
 
 export default class OpenStack {
   /**
@@ -35,6 +36,16 @@ export default class OpenStack {
   }
 
   /**
+   * List the images available on glance.
+   *
+   * @returns {Promise.<T>} A promise which will resolve with the list of images.
+   */
+  imageList() {
+    return this._glance
+      .then((glance) => glance.imageList(this._token));
+  }
+
+  /**
    * Keystone component.
    *
    * @returns {Promise.<Keystone>} A promise which will resolve with Keystone instance.
@@ -60,6 +71,20 @@ export default class OpenStack {
         .then((componentConfig) => new Neutron(componentConfig));
     }
     return this._neutronPromise;
+  }
+
+  /**
+   * Glance component.
+   *
+   * @returns {Promise.<Glance>} A promise which will resolve with Glance instance.
+   * @private
+   */
+  get _glance() {
+    if (!this._glancePromise) {
+      this._glancePromise = this._getComponentConfigFor('glance')
+        .then((componentConfig) => new Glance(componentConfig));
+    }
+    return this._glancePromise;
   }
 
   /**

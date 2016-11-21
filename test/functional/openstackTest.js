@@ -20,4 +20,17 @@ describe("OpenStack", () => {
     });
   });
 
+  describe("imageList()", () => {
+    it("should return the images as an array.", (done) => {
+      const openstack = new OpenStack(devstackConfig);
+
+      openstack.imageList()
+        .then((images) => {
+          expect(images.length > 0).toBeTruthy();
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+  });
+
 });

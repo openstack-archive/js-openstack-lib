@@ -2,9 +2,11 @@ import OpenStack from "../../src/openstack";
 import * as openStackMockData from './helpers/data/openstack';
 import * as neutronMockData from './helpers/data/neutron';
 import * as keystoneMockData from './helpers/data/keystone';
+import * as glanceMockData from './helpers/data/glance';
 import fetchMock from 'fetch-mock';
 import Neutron from "../../src/neutron";
 import Keystone from "../../src/keystone";
+import Glance from "../../src/glance";
 
 describe("Simple test", () => {
 
@@ -41,6 +43,23 @@ describe("Simple test", () => {
       openstack.networkList()
         .then((networks) => {
           expect(networks.length).toBe(2);
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+  });
+
+  describe('imageList', () => {
+    it('should fetch imageList from glance', (done) => {
+      const openstack = new OpenStack(openStackMockData.config());
+      const glance = mockGlance(openstack);
+      const imagesData = glanceMockData.imageList('token').response.images;
+
+      spyOn(glance, 'imageList').and.returnValue(Promise.resolve(imagesData));
+
+      openstack.imageList()
+        .then((images) => {
+          expect(images.length).toBe(3);
           done();
         })
         .catch((error) => done.fail(error));
@@ -111,6 +130,52 @@ describe("Simple test", () => {
     });
   });
 
+  describe('_glance', () => {
+    it('creates Glance instance with the correct endpoint', (done) => {
+      const token = 'test_token';
+      const openstack = new OpenStack(openStackMockData.config());
+      const keystone = mockKeystone(openstack);
+      const catalogData = keystoneMockData.catalogList(token).response.catalog;
+
+      spyOn(keystone, 'tokenIssue').and.returnValue(Promise.resolve(token));
+      spyOn(keystone, 'catalogList').and.returnValue(Promise.resolve(catalogData));
+
+      openstack._glance
+        .then((glance) => {
+          expect(keystone.catalogList).toHaveBeenCalledWith(token);
+          expect(glance).toEqual(jasmine.any(Glance));
+          expect(glance.endpointUrl).toEqual('http://192.168.99.99:9292');
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+
+    it('should cache Glance instance and Keystone token', (done) => {
+      const openstack = new OpenStack(openStackMockData.config());
+      const tokenIssueMock = keystoneMockData.tokenIssue();
+      const catalogListMock = keystoneMockData.catalogList('test_token');
+
+      fetchMock.mock(keystoneMockData.root());
+      fetchMock.mock(tokenIssueMock);
+      fetchMock.mock(catalogListMock);
+
+      openstack._glance
+        .then((glance) => {
+          expect(glance).toEqual(jasmine.any(Glance));
+          expect(fetchMock.calls(tokenIssueMock.matcher).length).toEqual(1);
+          expect(fetchMock.calls(catalogListMock.matcher).length).toEqual(1);
+          return openstack._glance;
+        })
+        .then((glance) => {
+          expect(glance).toEqual(jasmine.any(Glance));
+          expect(fetchMock.calls(tokenIssueMock.matcher).length).toEqual(1);
+          expect(fetchMock.calls(catalogListMock.matcher).length).toEqual(1);
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+  });
+
   describe('_token', () => {
     it('should fetch the token and cache it', (done) => {
       const openstack = new OpenStack(openStackMockData.config());
@@ -143,6 +208,12 @@ describe("Simple test", () => {
     const neutron = new Neutron(neutronMockData.config);
     openstack._neutronPromise = Promise.resolve(neutron);
     return neutron;
+  }
+
+  function mockGlance(openstack) {
+    const glance = new Glance(glanceMockData.config);
+    openstack._glancePromise = Promise.resolve(glance);
+    return glance;
   }
 
 });
