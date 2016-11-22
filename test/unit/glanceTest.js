@@ -31,21 +31,6 @@ describe('Glance', () => {
     expect(() => new Glance()).toThrow();
   });
 
-  describe("version()", () => {
-    it("Should return a supported version of the glance API.", (done) => {
-      const glance = new Glance(mockData.config);
-
-      fetchMock.mock(mockData.root());
-
-      glance.version()
-        .then((version) => {
-          expect(version.id).toEqual('v2.3');
-          done();
-        })
-        .catch((error) => done.fail(error));
-    });
-  });
-
   describe("serviceEndpoint()", () => {
     it("Should return a valid endpoint to the glance API.", (done) => {
       const glance = new Glance(mockData.config);

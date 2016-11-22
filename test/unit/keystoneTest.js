@@ -15,43 +15,6 @@ describe('Keystone', () => {
     expect(() => new Keystone()).toThrow();
   });
 
-  describe("versions()", () => {
-
-    /**
-     * Keystone needs an explicit test, as it uses a slightly different data format
-     * than other services.
-     */
-    it("Should return a list of all versions available on this clouds' keystone", (done) => {
-      const keystone = new Keystone(mockData.config);
-
-      fetchMock.mock(mockData.root());
-
-      keystone.versions()
-        .then((versions) => {
-          // Quick sanity check.
-          expect(versions.length).toBe(2);
-          done();
-        })
-        .catch((error) => done.fail(error));
-    });
-  });
-
-  describe("version()", () => {
-
-    it("Should return a supported version of the keystone API.", (done) => {
-      const keystone = new Keystone(mockData.config);
-
-      fetchMock.mock(mockData.root());
-
-      keystone.version()
-        .then((version) => {
-          expect(version.id).toEqual('v3.7');
-          done();
-        })
-        .catch((error) => done.fail(error));
-    });
-  });
-
   describe("serviceEndpoint()", () => {
     it("Should return a valid endpoint to the keystone API.", (done) => {
       const keystone = new Keystone(mockData.config);

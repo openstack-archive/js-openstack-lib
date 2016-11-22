@@ -53,21 +53,12 @@ describe('AbstractService', () => {
       service.versions()
         .then((versions) => {
           // Quick sanity check.
-          expect(versions.length).toBe(6);
-          done();
-        })
-        .catch((error) => done.fail(error));
-    });
-
-    it("Should return a list of all versions available from this resource", (done) => {
-      const service = new AbstractService(mockData.rootUrl, mockData.versions);
-
-      fetchMock.mock(mockData.rootResponse());
-
-      service.versions()
-        .then((versions) => {
-          // Quick sanity check.
-          expect(versions.length).toBe(6);
+          expect(versions.length).toBe(5);
+          expect(versions[0].major).toEqual(2);
+          expect(versions[0].minor).toEqual(3);
+          expect(versions[0].patch).toEqual(0);
+          expect(versions[0].links).not.toBe(null);
+          expect(versions[0].links[0].href).toEqual('http://example.com/v2/');
           done();
         })
         .catch((error) => done.fail(error));
@@ -84,7 +75,7 @@ describe('AbstractService', () => {
       service.versions()
         .then((versions) => {
           // Quick sanity check.
-          expect(versions.length).toBe(6);
+          expect(versions.length).toBe(5);
           done();
         })
         .catch((error) => done.fail(error));
@@ -132,7 +123,22 @@ describe('AbstractService', () => {
 
       service.version()
         .then((version) => {
-          expect(version.id).toEqual('v2.3');
+          expect(version.equals('v2.3')).toBe(true);
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+
+    it("Should return the latest compatible version of the service API.", (done) => {
+      const service = new AbstractService(mockData.rootUrl, [
+        'v2.0'
+      ]);
+
+      fetchMock.mock(mockData.rootResponse());
+
+      service.version()
+        .then((version) => {
+          expect(version.equals('v2.3')).toBe(true);
           done();
         })
         .catch((error) => done.fail(error));

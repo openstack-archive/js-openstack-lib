@@ -43,7 +43,7 @@ describe("Keystone", () => {
   describe("version()", () => {
 
     const supportedApiVersions = [
-      new Version('identity 3.7')
+      new Version('3.7')
     ];
 
     /**
@@ -52,11 +52,7 @@ describe("Keystone", () => {
      */
     it("should return a supported version.", (done) => {
       keystone.version()
-        .then((version) => {
-
-          // Quick sanity check.
-          const apiVersion = new Version('identity', version.id);
-
+        .then((apiVersion) => {
           for (let i = 0; i < supportedApiVersions.length; i++) {
             let supportedVersion = supportedApiVersions[i];
             if (apiVersion.equals(supportedVersion)) {
@@ -64,7 +60,7 @@ describe("Keystone", () => {
               return;
             }
           }
-          fail("Current devstack keystone version is not supported.");
+          fail(`Current devstack keystone version (${apiVersion}) is not supported.`);
           done();
         })
         .catch((response) => response.json()
