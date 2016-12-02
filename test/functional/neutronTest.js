@@ -50,7 +50,7 @@ describe("neutron", () => {
   describe("version()", () => {
 
     const supportedApiVersions = [
-      new Version('network 2.0')
+      new Version('2.0')
     ];
 
     /**
@@ -61,11 +61,7 @@ describe("neutron", () => {
       configPromise
         .then((config) => new Neutron(config))
         .then((neutron) => neutron.version())
-        .then((version) => {
-
-          // Quick sanity check.
-          const apiVersion = new Version('network', version.id);
-
+        .then((apiVersion) => {
           for (let i = 0; i < supportedApiVersions.length; i++) {
             let supportedVersion = supportedApiVersions[i];
             if (apiVersion.equals(supportedVersion)) {
@@ -73,7 +69,7 @@ describe("neutron", () => {
               return;
             }
           }
-          fail("Current devstack neutron version is not supported.");
+          fail(`Current devstack neutron version (${apiVersion}) is not supported.`);
           done();
         })
         .catch((error) => done.fail(error));

@@ -7,7 +7,7 @@ import AbstractService from './util/abstractService';
  * @ignore
  */
 const supportedKeystoneVersions = [
-  'v3.7'
+  'v3.1'
 ];
 
 export default class Keystone extends AbstractService {
@@ -59,12 +59,13 @@ export default class Keystone extends AbstractService {
   }
 
   /**
-   * Retrieve all the API versions available.
+   * Retrieve all the raw API versions available.
    *
-   * @returns {Promise.<T>} A promise that will resolve with the list of API versions.
+   * @returns {Promise.<Object[]>} A promise that will resolve with the list of raw versions.
+   * @protected
    */
-  versions() {
-    return super.versions()
+  _rawVersions() {
+    return super._rawVersions()
       .then((versions) => versions.values);
   }
 

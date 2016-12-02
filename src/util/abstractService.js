@@ -15,6 +15,7 @@
  */
 
 import Http from './http';
+import Version from './version';
 import URL from 'url-parse';
 
 export default class AbstractService {
@@ -64,9 +65,25 @@ export default class AbstractService {
   /**
    * Retrieve all the API versions available.
    *
-   * @returns {Promise.<T>} A promise that will resolve with the list of API versions.
+   * @returns {Promise.<Version[]>} A promise that will resolve with the list of API versions.
    */
   versions() {
+    return this._rawVersions().then((versions) => {
+      return versions.map((rawVersion) => {
+        const version = new Version(rawVersion.id);
+        version.links = rawVersion.links;
+        return version;
+      });
+    });
+  }
+
+  /**
+   * Retrieve all the raw API versions available.
+   *
+   * @returns {Promise.<Object[]>} A promise that will resolve with the list of raw versions.
+   * @protected
+   */
+  _rawVersions() {
     return new Promise((resolve, reject) => {
       let promise = this.http
         .httpGet(this._endpointUrl)
@@ -92,14 +109,14 @@ export default class AbstractService {
   /**
    * Retrieve the API version declaration that is currently in use by this instance.
    *
-   * @returns {Promise.<T>} A promise that will resolve with the specific API version.
+   * @returns {Promise.<Version>} A promise that will resolve with the specific API version.
    */
   version() {
     return this
       .versions()
       .then((versions) => {
         for (let version of versions) {
-          if (this.supportedVersions.indexOf(version.id) > -1) {
+          if (this.supportedVersions.find(version.supports)) {
             return version;
           }
         }

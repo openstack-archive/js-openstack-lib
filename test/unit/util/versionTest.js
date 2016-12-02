@@ -96,4 +96,63 @@ describe('Version', () => {
     // Other tests...
     expect(v2.equals({})).toBe(false);
   });
+
+  it("should test for correct compatibility", () => {
+    const v1 = new Version("compute", "1.3.2");
+
+    // String tests
+    expect(v1.supports("compute 1.0.0")).toBe(true);
+    expect(v1.supports("compute 1.0.1")).toBe(true);
+    expect(v1.supports("compute 1.3.0")).toBe(true);
+    expect(v1.supports("compute 1.3.3")).toBe(false);
+    expect(v1.supports("compute 1.4.0")).toBe(false);
+    expect(v1.supports("compute 2.3.0")).toBe(false);
+
+    // Version tests
+    expect(v1.supports(new Version("compute", "1.0.0"))).toBe(true);
+    expect(v1.supports(new Version("compute", "1.0.1"))).toBe(true);
+    expect(v1.supports(new Version("compute", "1.3.0"))).toBe(true);
+    expect(v1.supports(new Version("compute", "1.3.3"))).toBe(false);
+    expect(v1.supports(new Version("compute", "1.4.0"))).toBe(false);
+    expect(v1.supports(new Version("compute", "2.3.0"))).toBe(false);
+
+    const v2 = new Version("1.3.2");
+    // String tests
+    expect(v2.supports("1.0.0")).toBe(true);
+    expect(v2.supports("1.0.1")).toBe(true);
+    expect(v2.supports("1.3.0")).toBe(true);
+    expect(v2.supports("1.3.3")).toBe(false);
+    expect(v2.supports("1.4.0")).toBe(false);
+    expect(v2.supports("2.3.0")).toBe(false);
+
+    // Version tests
+    expect(v2.supports(new Version("1.0.0"))).toBe(true);
+    expect(v2.supports(new Version("1.0.1"))).toBe(true);
+    expect(v2.supports(new Version("1.3.0"))).toBe(true);
+    expect(v2.supports(new Version("1.3.3"))).toBe(false);
+    expect(v2.supports(new Version("1.4.0"))).toBe(false);
+    expect(v2.supports(new Version("2.3.0"))).toBe(false);
+  });
+
+  it("should store links", () => {
+    const v1 = new Version("compute", "1.3.2");
+
+    expect(v1.links).toBe(null);
+
+    v1.links = 'wrong data';
+    expect(v1.links).toBe(null);
+
+    v1.links = [
+      {
+        href: `http://example.org/v2/`,
+        rel: "self"
+      }
+    ];
+    expect(v1.links).not.toBe(null);
+    expect(v1.links.length).toBe(1);
+    expect(v1.links[0]).toEqual({
+      href: "http://example.org/v2/",
+      rel: "self"
+    });
+  });
 });

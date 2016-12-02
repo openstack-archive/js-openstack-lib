@@ -36,22 +36,6 @@ describe('neutron', () => {
     }
   });
 
-  describe("versions()", () => {
-    it("Should return a list of all versions available on this clouds' NEUTRON", (done) => {
-      const neutron = new Neutron(mockData.config);
-
-      fetchMock.mock(mockData.root());
-
-      neutron.versions()
-        .then((versions) => {
-          // Quick sanity check.
-          expect(versions.length).toBe(1);
-          done();
-        })
-        .catch((error) => done.fail(error));
-    });
-  });
-
   describe("networkList()", () => {
     let neutron = null;
 

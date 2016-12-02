@@ -77,16 +77,6 @@ function rootResponse() {
         },
         {
           status: "SUPPORTED",
-          id: "v2.0",
-          links: [
-            {
-              href: `${rootUrl}v2/`,
-              rel: "self"
-            }
-          ]
-        },
-        {
-          status: "SUPPORTED",
           id: "v1.1",
           links: [
             {

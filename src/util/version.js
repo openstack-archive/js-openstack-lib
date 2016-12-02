@@ -57,9 +57,29 @@ export default class Version {
   }
 
   /**
+   * The links of the service
+   *
+   * @returns {Object[]} The list of links.
+   */
+  get links() {
+    return this._links || null;
+  }
+
+  /**
+   * Sets the links of the service
+   *
+   * @param {Object[]} links The links to be set
+   */
+  set links(links) {
+    if (Array.isArray(links)) {
+      this._links = links;
+    }
+  }
+
+  /**
    * Create a new instance of a service version.
    *
-   * @param {String} service The name of the service.
+   * @param {String} [service] The name of the service.
    * @param {String} versionString The version string for this service.
    */
   constructor(service, versionString) {
@@ -89,6 +109,10 @@ export default class Version {
       this._minor = parseInt(results[6], 10);
       this._patch = parseInt(results[8], 10);
     }
+    this._links = null;
+
+    this.equals = this.equals.bind(this);
+    this.supports = this.supports.bind(this);
   }
 
   /**
@@ -111,5 +135,39 @@ export default class Version {
       version.minor === this.minor &&
       version.patch === this.patch &&
       version.service === this.service;
+  }
+
+  /**
+   * Verifies compatibility of this instance to another instance. Major version should be equal and
+   * minor version should be greater or equal than `version` parameter.
+   *
+   * @param {String|Version} version the version to support.
+   * @returns {boolean} True if the version is compatible, otherwise false
+   */
+  supports(version) {
+    if (!(version instanceof Version)) {
+      if (typeof version === 'string') {
+        version = new Version(version);
+      } else {
+        return false;
+      }
+    }
+
+    const compatibleVersion = version.service === this.service &&
+      version.major === this.major &&
+      version.minor <= this.minor;
+
+    if (compatibleVersion && version.minor === this.minor) {
+      return version.patch <= this.patch;
+    }
+    return compatibleVersion;
+  }
+
+  toString() {
+    let version = `${this.major}.${this.minor}`;
+    if (this.patch) {
+      version = `${version}.${this.patch}`;
+    }
+    return version;
   }
 }

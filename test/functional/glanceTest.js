@@ -50,7 +50,7 @@ describe("Glance", () => {
   describe("version()", () => {
 
     const supportedApiVersions = [
-      new Version('image 2.3')
+      new Version('2.4')
     ];
 
     /**
@@ -61,11 +61,7 @@ describe("Glance", () => {
       configPromise
         .then((config) => new Glance(config))
         .then((glance) => glance.version())
-        .then((version) => {
-
-          // Quick sanity check.
-          const apiVersion = new Version('image', version.id);
-
+        .then((apiVersion) => {
           for (let i = 0; i < supportedApiVersions.length; i++) {
             let supportedVersion = supportedApiVersions[i];
             if (apiVersion.equals(supportedVersion)) {
@@ -73,7 +69,7 @@ describe("Glance", () => {
               return;
             }
           }
-          fail("Current devstack glance version is not supported.");
+          fail(`Current devstack glance version (${apiVersion}) is not supported.`);
           done();
         })
         .catch((error) => done.fail(error));
