@@ -58,7 +58,8 @@ export default class Glance extends AbstractService {
   /**
    * List the images available on glance.
    *
-   * @param {String} token An authorization token, or a promise which will resolve into one.
+   * @param {(String|Promise.<T>)} token An authorization token, or a promise which will resolve
+   * into one.
    * @returns {Promise.<T>} A promise which will resolve with the list of images.
    */
   imageList(token = null) {
