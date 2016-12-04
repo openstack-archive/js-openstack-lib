@@ -3,10 +3,12 @@ import * as openStackMockData from './helpers/data/openstack';
 import * as neutronMockData from './helpers/data/neutron';
 import * as keystoneMockData from './helpers/data/keystone';
 import * as glanceMockData from './helpers/data/glance';
+import * as novaMockData from './helpers/data/nova';
 import fetchMock from 'fetch-mock';
 import Neutron from "../../src/neutron";
 import Keystone from "../../src/keystone";
 import Glance from "../../src/glance";
+import Nova from "../../src/nova";
 
 describe("Simple test", () => {
 
@@ -60,6 +62,23 @@ describe("Simple test", () => {
       openstack.imageList()
         .then((images) => {
           expect(images.length).toBe(3);
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+  });
+
+  describe('flavorList', () => {
+    it('should fetch flavorList from nova', (done) => {
+      const openstack = new OpenStack(openStackMockData.config());
+      const nova = mockNova(openstack);
+      const flavorsData = novaMockData.flavorList('token').response.flavors;
+
+      spyOn(nova, 'flavorList').and.returnValue(Promise.resolve(flavorsData));
+
+      openstack.flavorList()
+        .then((flavors) => {
+          expect(flavors.length).toBe(12);
           done();
         })
         .catch((error) => done.fail(error));
@@ -176,6 +195,52 @@ describe("Simple test", () => {
     });
   });
 
+  describe('_nova', () => {
+    it('creates Nova instance with the correct endpoint', (done) => {
+      const token = 'test_token';
+      const openstack = new OpenStack(openStackMockData.config());
+      const keystone = mockKeystone(openstack);
+      const catalogData = keystoneMockData.catalogList(token).response.catalog;
+
+      spyOn(keystone, 'tokenIssue').and.returnValue(Promise.resolve(token));
+      spyOn(keystone, 'catalogList').and.returnValue(Promise.resolve(catalogData));
+
+      openstack._nova
+        .then((nova) => {
+          expect(keystone.catalogList).toHaveBeenCalledWith(token);
+          expect(nova).toEqual(jasmine.any(Nova));
+          expect(nova.endpointUrl).toEqual('http://192.168.99.99:8774/v2.1');
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+
+    it('should cache Nova instance and Keystone token', (done) => {
+      const openstack = new OpenStack(openStackMockData.config());
+      const tokenIssueMock = keystoneMockData.tokenIssue();
+      const catalogListMock = keystoneMockData.catalogList('test_token');
+
+      fetchMock.mock(keystoneMockData.root());
+      fetchMock.mock(tokenIssueMock);
+      fetchMock.mock(catalogListMock);
+
+      openstack._nova
+        .then((nova) => {
+          expect(nova).toEqual(jasmine.any(Nova));
+          expect(fetchMock.calls(tokenIssueMock.matcher).length).toEqual(1);
+          expect(fetchMock.calls(catalogListMock.matcher).length).toEqual(1);
+          return openstack._nova;
+        })
+        .then((nova) => {
+          expect(nova).toEqual(jasmine.any(Nova));
+          expect(fetchMock.calls(tokenIssueMock.matcher).length).toEqual(1);
+          expect(fetchMock.calls(catalogListMock.matcher).length).toEqual(1);
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+  });
+
   describe('_token', () => {
     it('should fetch the token and cache it', (done) => {
       const openstack = new OpenStack(openStackMockData.config());
@@ -214,6 +279,12 @@ describe("Simple test", () => {
     const glance = new Glance(glanceMockData.config);
     openstack._glancePromise = Promise.resolve(glance);
     return glance;
+  }
+
+  function mockNova(openstack) {
+    const nova = new Nova(novaMockData.config);
+    openstack._novaPromise = Promise.resolve(nova);
+    return nova;
   }
 
 });

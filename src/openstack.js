@@ -1,6 +1,7 @@
 import Keystone from "./keystone";
 import Neutron from "./neutron";
 import Glance from "./glance";
+import Nova from "./nova";
 
 export default class OpenStack {
   /**
@@ -46,6 +47,16 @@ export default class OpenStack {
   }
 
   /**
+   * List the flavors available on nova.
+   *
+   * @returns {Promise.<T>} A promise which will resolve with the list of flavors.
+   */
+  flavorList() {
+    return this._nova
+      .then((nova) => nova.flavorList(this._token));
+  }
+
+  /**
    * Keystone component.
    *
    * @returns {Promise.<Keystone>} A promise which will resolve with Keystone instance.
@@ -85,6 +96,20 @@ export default class OpenStack {
         .then((componentConfig) => new Glance(componentConfig));
     }
     return this._glancePromise;
+  }
+
+  /**
+   * Nova component.
+   *
+   * @returns {Promise.<Nova>} A promise which will resolve with Nova instance.
+   * @private
+   */
+  get _nova() {
+    if (!this._novaPromise) {
+      this._novaPromise = this._getComponentConfigFor('nova')
+        .then((componentConfig) => new Nova(componentConfig));
+    }
+    return this._novaPromise;
   }
 
   /**
