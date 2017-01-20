@@ -43,7 +43,7 @@ describe("Keystone", () => {
   describe("version()", () => {
 
     const supportedApiVersions = [
-      new Version('3.7')
+      new Version('3.8')
     ];
 
     /**
