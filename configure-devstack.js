@@ -8,7 +8,8 @@ function getDevstackConfig() {
 
   return getCorsConfig('$KEYSTONE_CONF', karmaConfig) +
     getCorsConfig('$GLANCE_API_CONF', karmaConfig) +
-    getCorsConfig('$NEUTRON_CONF', karmaConfig);
+    getCorsConfig('$NEUTRON_CONF', karmaConfig) +
+    getCorsConfig('$NOVA_CONF', karmaConfig);
 
 }
 
