@@ -10,7 +10,7 @@ Team and repository tags
 JS-OpenStack-lib
 ================
 
-JS-OpenStack-lib is a Javascript library for interacting with OpenStack clouds. The project aims to provide a constistent and complete set of interactions with OpenStack's many services, along with documentations, examples, and tools.
+JS-OpenStack-lib is a Javascript library for interacting with OpenStack clouds. The project aims to provide a consistent and complete set of interactions with OpenStack's many services, along with documentations, examples, and tools.
 This library is compatible with both browser and server side Javascript.
 
 Example
