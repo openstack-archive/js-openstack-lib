@@ -33,4 +33,17 @@ describe("OpenStack", () => {
     });
   });
 
+  describe("flavorList()", () => {
+    it("should return the flavors as an array.", (done) => {
+      const openstack = new OpenStack(devstackConfig);
+
+      openstack.flavorList()
+        .then((flavors) => {
+          expect(flavors.length > 0).toBeTruthy();
+          done();
+        })
+        .catch((error) => done.fail(error));
+    });
+  });
+
 });
