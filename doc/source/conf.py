@@ -59,7 +59,7 @@ copyright = u'%s, OpenStack Foundation' % datetime.date.today().year
 #   bug_tag: Tag for categorizing the bug. Must be set manually.
 #   bug_project: Launchpad project to file bugs against.
 # These variables are passed to the logabug code via html_context.
-giturl = u'http://git.openstack.org/cgit/openstack/js-openstack-lib/tree/doc/source'
+giturl = u'https://git.openstack.org/cgit/openstack/js-openstack-lib/tree/doc/source'
 git_cmd = "/usr/bin/git log | head -n1 | cut -f2 -d' '"
 gitsha = os.popen(git_cmd).read().strip('\n')
 bug_tag = "docs"
