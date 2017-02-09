@@ -45,6 +45,16 @@ function rootResponse() {
       versions: [
         {
           status: "CURRENT",
+          id: "v2.5",
+          links: [
+            {
+              href: "http://192.168.99.99:9292/v2/",
+              rel: "self"
+            }
+          ]
+        },
+        {
+          status: "SUPPORTED",
           id: "v2.3",
           links: [
             {
