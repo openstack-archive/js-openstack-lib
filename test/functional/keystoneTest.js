@@ -41,11 +41,6 @@ describe("Keystone", () => {
   });
 
   describe("version()", () => {
-
-    const supportedApiVersions = [
-      new Version('3.8')
-    ];
-
     /**
      * This test acts as a canary, to inform the SDK developers that the Keystone API
      * has changed in a significant way.
@@ -53,14 +48,7 @@ describe("Keystone", () => {
     it("should return a supported version.", (done) => {
       keystone.version()
         .then((apiVersion) => {
-          for (let i = 0; i < supportedApiVersions.length; i++) {
-            let supportedVersion = supportedApiVersions[i];
-            if (apiVersion.equals(supportedVersion)) {
-              done();
-              return;
-            }
-          }
-          fail(`Current devstack keystone version (${apiVersion}) is not supported.`);
+          expect(apiVersion instanceof Version).not.toBeFalsy();
           done();
         })
         .catch((response) => response.json()

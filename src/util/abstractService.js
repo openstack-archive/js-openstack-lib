@@ -85,7 +85,7 @@ export default class AbstractService {
    */
   _rawVersions() {
     return new Promise((resolve, reject) => {
-      let promise = this.http
+      this.http
         .httpGet(this._endpointUrl)
         .catch((response) => {
           if (response.status === 401) {
@@ -96,13 +96,12 @@ export default class AbstractService {
 
             return this.http.httpGet(rootUrl.href);
           } else {
-            return reject(response);
+            throw response;
           }
-        });
-
-      promise
+        })
         .then((response) => response.json())
-        .then((body) => resolve(body.versions));
+        .then((body) => resolve(body.versions))
+        .catch(reject);
     });
   }
 

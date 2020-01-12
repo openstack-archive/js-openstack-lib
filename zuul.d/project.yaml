@@ -1,0 +1,15 @@
+---
+- project:
+    templates:
+      - nodejs8-docs
+      - nodejs8-jobs
+      - nodejs8-publish-to-npm
+    check:
+      jobs:
+        - js-openstack-lib-unit-tests-nodejs12
+    gate:
+      jobs:
+        - js-openstack-lib-unit-tests-nodejs12
+    experimental:
+      jobs:
+        - js-openstack-lib-functional-tests-nodejs12

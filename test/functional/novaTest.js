@@ -34,10 +34,6 @@ describe("Nova", () => {
     .then((entry) => entry.endpoints.find((endpoint) => endpoint.interface === 'public'));
 
   describe("version()", () => {
-    const supportedApiVersions = [
-      new Version('2.1')
-    ];
-
     /**
      * This test acts as a canary, to inform the SDK developers that the Nova API
      * has changed in a significant way.
@@ -47,8 +43,7 @@ describe("Nova", () => {
         .then((config) => new Nova(config))
         .then((nova) => nova.version())
         .then((apiVersion) => {
-          let found = supportedApiVersions.find((item) => item.equals(apiVersion));
-          expect(found).not.toBeFalsy();
+          expect(apiVersion instanceof Version).not.toBeFalsy();
           done();
         })
         .catch((error) => done.fail(error));
