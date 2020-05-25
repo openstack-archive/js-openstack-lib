@@ -14,76 +14,75 @@
  * under the License.
  */
 
-import Glance from "../../src/glance.js";
-import * as mockData from "./helpers/data/glance";
-import fetchMock from "fetch-mock";
+import Glance from '../../src/glance.js'
+import * as mockData from './helpers/data/glance'
+import fetchMock from 'fetch-mock'
 
 describe('Glance', () => {
-
-  afterEach(fetchMock.restore);
+  afterEach(fetchMock.restore)
 
   it('should export a class', () => {
-    const glance = new Glance(mockData.config);
-    expect(glance).toBeDefined();
-  });
+    const glance = new Glance(mockData.config)
+    expect(glance).toBeDefined()
+  })
 
   it('should throw an error for an empty config', () => {
-    expect(() => new Glance()).toThrow();
-  });
+    expect(() => new Glance()).toThrow()
+  })
 
-  describe("serviceEndpoint()", () => {
-    it("Should return a valid endpoint to the glance API.", (done) => {
-      const glance = new Glance(mockData.config);
+  describe('serviceEndpoint()', () => {
+    it('Should return a valid endpoint to the glance API.', (done) => {
+      const glance = new Glance(mockData.config)
 
-      fetchMock.mock(mockData.root());
+      fetchMock.mock(mockData.root())
 
       glance.serviceEndpoint()
         .then((endpoint) => {
-          expect(endpoint).toEqual('http://192.168.99.99:9292/v2/');
-          done();
+          expect(endpoint).toEqual('http://192.168.99.99:9292/v2/')
+          done()
         })
-        .catch((error) => done.fail(error));
-    });
-  });
+        .catch((error) => done.fail(error))
+    })
+  })
 
-  describe("imageList()", () => {
-    let glance = null;
+  describe('imageList()', () => {
+    let glance = null
 
     beforeEach(() => {
-      fetchMock.mock(mockData.root());
-      glance = new Glance(mockData.config);
-    });
+      fetchMock.mock(mockData.root())
+      glance = new Glance(mockData.config)
+    })
 
-    it("should return the images as an array.", (done) => {
-      const token = 'test_token';
+    it('should return the images as an array.', (done) => {
+      const token = 'test_token'
 
-      fetchMock.mock(mockData.imageList(token));
+      fetchMock.mock(mockData.imageList(token))
       glance
         .imageList(token)
         .then((images) => {
-          expect(images.length).not.toBe(0);
-          done();
+          expect(images.length).not.toBe(0)
+          done()
         })
-        .catch((error) => done.fail(error));
-    });
+        .catch((error) => done.fail(error))
+    })
 
-    it("Should not cache its results", (done) => {
-      const token = 'test_token';
+    it('Should not cache its results', (done) => {
+      const token = 'test_token'
 
-      let mockOptions = mockData.imageList(token);
-      fetchMock.mock(mockOptions);
+      const mockOptions = mockData.imageList(token)
+      fetchMock.mock(mockOptions)
 
       glance
         .imageList(token)
         .then(() => {
-          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(1);
-          return glance.imageList(token);
+          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(1)
+          return glance.imageList(token)
         })
         .then(() => {
-          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(2);
-          done();
+          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(2)
+          done()
         })
-        .catch((error) => done.fail(error));
-    });
-  });
-});
+        .catch((error) => done.fail(error))
+    })
+  })
+})

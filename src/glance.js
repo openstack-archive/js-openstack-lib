@@ -13,7 +13,7 @@
  * the License for the specific language governing permissions and limitations
  * under the License.
  */
-import AbstractService from './util/abstractService';
+import AbstractService from './util/abstractService'
 
 /**
  * A list of all supported versions. Please keep this array sorted by most recent.
@@ -23,10 +23,9 @@ import AbstractService from './util/abstractService';
  */
 const supportedGlanceVersions = [
   'v2.3'
-];
+]
 
 export default class Glance extends AbstractService {
-
   /**
    * This class provides direct, idempotent, low-level access to the Glance API of a specific
    * cloud. The constructor requires that you provide a specific glance interface endpoint
@@ -42,17 +41,17 @@ export default class Glance extends AbstractService {
    * }
    * @param {{}} endpointConfig The configuration element for a specific glance endpoint.
    */
-  constructor(endpointConfig) {
+  constructor (endpointConfig) {
     // Sanity checks.
     if (!endpointConfig || !endpointConfig.url) {
-      throw new Error('An endpoint configuration is required.');
+      throw new Error('An endpoint configuration is required.')
     }
     // Clone the config, so that this instance is immutable
     // at runtime (no modifying the config after the fact).
-    endpointConfig = Object.assign({}, endpointConfig);
+    endpointConfig = Object.assign({}, endpointConfig)
 
-    super(endpointConfig.url, supportedGlanceVersions);
-    this._config = endpointConfig;
+    super(endpointConfig.url, supportedGlanceVersions)
+    this._config = endpointConfig
   }
 
   /**
@@ -62,11 +61,11 @@ export default class Glance extends AbstractService {
    * into one.
    * @returns {Promise.<T>} A promise which will resolve with the list of images.
    */
-  imageList(token = null) {
+  imageList (token = null) {
     return this
       ._requestComponents(token)
       .then(([url, headers]) => this.http.httpRequest('GET', `${url}images`, headers))
       .then((response) => response.json())
-      .then((body) => body.images);
+      .then((body) => body.images)
   }
 }

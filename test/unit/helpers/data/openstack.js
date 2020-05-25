@@ -25,7 +25,7 @@
  * @param {String} regionName A region name to use
  * @returns {{}} a cloud config object.
  */
-function cloudConfig(regionName = 'RegionOne') {
+function cloudConfig (regionName = 'RegionOne') {
   return {
     region_name: regionName,
     auth: {
@@ -34,9 +34,9 @@ function cloudConfig(regionName = 'RegionOne') {
       project_name: 'js-openstack-lib',
       auth_url: 'http://192.168.99.99/'
     }
-  };
+  }
 }
 
 export {
-  cloudConfig as config,
-};
+  cloudConfig as config
+}

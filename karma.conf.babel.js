@@ -1,9 +1,9 @@
-import webpackConfig from './webpack.config.babel';
-import path from 'path';
+import webpackConfig from './webpack.config.babel'
+import path from 'path'
 
 export default (config) => {
   // test mode based on basePath parameter (eg. test/unit, test/functional)
-  const testDir = config.basePath ? path.basename(config.basePath) : 'unit';
+  const testDir = config.basePath ? path.basename(config.basePath) : 'unit'
 
   config.set({
 
@@ -69,9 +69,9 @@ export default (config) => {
 
     // Generate a coverage report in /cover/karma
     coverageReporter: {
-      type: 'html', //produces a html document after code is run
-      dir: '../../cover/' + testDir + '/browser/' //path to created html doc
-    },
+      type: 'html', // produces a html document after code is run
+      dir: '../../cover/' + testDir + '/browser/' // path to created html doc
+    }
 
-  });
-};
+  })
+}

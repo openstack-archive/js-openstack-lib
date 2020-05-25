@@ -1,4 +1,4 @@
-import AbstractService from './util/abstractService';
+import AbstractService from './util/abstractService'
 
 /**
  * A list of all supported versions. Please keep this array sorted by most recent.
@@ -8,10 +8,9 @@ import AbstractService from './util/abstractService';
  */
 const supportedKeystoneVersions = [
   'v3.1'
-];
+]
 
 export default class Keystone extends AbstractService {
-
   /**
    * This class provides direct, idempotent, low-level access to the Keystone API of a specific
    * cloud. The constructor requires that you provide a configuration object for a specific
@@ -22,17 +21,17 @@ export default class Keystone extends AbstractService {
    * @param {{}} cloudConfig The configuration object for a specific cloud.
    * @see http://docs.openstack.org/developer/os-client-config/#site-specific-file-locations
    */
-  constructor(cloudConfig) {
+  constructor (cloudConfig) {
     // Sanity checks.
     if (!cloudConfig) {
-      throw new Error('A configuration is required.');
+      throw new Error('A configuration is required.')
     }
     // Clone the config, so that this instance is immutable
     // at runtime (no modifying the config after the fact).
-    cloudConfig = Object.assign({}, cloudConfig);
+    cloudConfig = Object.assign({}, cloudConfig)
 
-    super(cloudConfig.auth.auth_url, supportedKeystoneVersions);
-    this.cloudConfig = cloudConfig;
+    super(cloudConfig.auth.auth_url, supportedKeystoneVersions)
+    this.cloudConfig = cloudConfig
   }
 
   /**
@@ -44,18 +43,18 @@ export default class Keystone extends AbstractService {
    * @returns {String} The value found in the config, or null.
    * @ignore
    */
-  _safeConfigGet(path) {
-    let segments = path.split('.');
-    let pointer = this.cloudConfig;
+  _safeConfigGet (path) {
+    const segments = path.split('.')
+    let pointer = this.cloudConfig
     while (segments.length > 0) {
-      let prop = segments.shift();
-      if (pointer.hasOwnProperty(prop)) {
-        pointer = pointer[prop];
+      const prop = segments.shift()
+      if (Object.prototype.hasOwnProperty.call(pointer, prop)) {
+        pointer = pointer[prop]
       } else {
-        return null;
+        return null
       }
     }
-    return pointer;
+    return pointer
   }
 
   /**
@@ -64,9 +63,9 @@ export default class Keystone extends AbstractService {
    * @returns {Promise.<Object[]>} A promise that will resolve with the list of raw versions.
    * @protected
    */
-  _rawVersions() {
+  _rawVersions () {
     return super._rawVersions()
-      .then((versions) => versions.values);
+      .then((versions) => versions.values)
   }
 
   /**
@@ -92,7 +91,7 @@ export default class Keystone extends AbstractService {
    *   Not required if a project ID is given.
    * @returns {Promise.<T>} A promise which will resolve with a valid token.
    */
-  tokenIssue({
+  tokenIssue ({
     user_id: userId = this._safeConfigGet('auth.user_id'),
     username = this._safeConfigGet('auth.username'),
     password = this._safeConfigGet('auth.password'),
@@ -103,32 +102,32 @@ export default class Keystone extends AbstractService {
     project_domain_id: projectDomainId = this._safeConfigGet('auth.project_domain_id'),
     project_domain_name: projectDomainName = this._safeConfigGet('auth.project_domain_name')
   } = {}) {
-    let project;
-    let user = {password};
+    let project
+    const user = { password }
 
     if (userId) {
-      user.id = userId;
+      user.id = userId
     } else if (username) {
-      user.name = username;
+      user.name = username
       if (userDomainId) {
-        user.domain = {id: userDomainId};
+        user.domain = { id: userDomainId }
       } else if (userDomainName) {
-        user.domain = {name: userDomainName};
+        user.domain = { name: userDomainName }
       } else {
-        user.domain = {id: 'default'};
+        user.domain = { id: 'default' }
       }
     }
 
     if (projectId) {
-      project = {id: projectId};
+      project = { id: projectId }
     } else if (projectName) {
-      project = {name: projectName};
+      project = { name: projectName }
       if (projectDomainId) {
-        project.domain = {id: projectDomainId};
+        project.domain = { id: projectDomainId }
       } else if (projectDomainName) {
-        project.domain = {name: projectDomainName};
+        project.domain = { name: projectDomainName }
       } else {
-        project.domain = {id: 'default'};
+        project.domain = { id: 'default' }
       }
     }
 
@@ -136,18 +135,18 @@ export default class Keystone extends AbstractService {
       auth: {
         identity: {
           methods: ['password'],
-          password: {user}
+          password: { user }
         },
-        scope: project ? {project} : 'unscoped'
+        scope: project ? { project } : 'unscoped'
       }
-    };
+    }
 
     return this
       .serviceEndpoint()
       .then((url) => this.http.httpPost(`${url}auth/tokens`, body))
       .then((response) => {
-        return response.headers.get('X-Subject-Token');
-      });
+        return response.headers.get('X-Subject-Token')
+      })
   }
 
   /**
@@ -157,16 +156,16 @@ export default class Keystone extends AbstractService {
    * @param {String} adminToken An optional admin token.
    * @returns {Promise.<T>} A promise which will resolve if the token has been successfully revoked.
    */
-  tokenRevoke(token, adminToken = null) {
+  tokenRevoke (token, adminToken = null) {
     return Promise
       .all([this.serviceEndpoint(), token, adminToken])
       .then(([url, token, adminToken]) => {
         return [url, {
           'X-Subject-Token': token,
           'X-Auth-Token': adminToken || token
-        }];
+        }]
       })
-      .then(([url, headers]) => this.http.httpRequest('DELETE', `${url}auth/tokens`, headers));
+      .then(([url, headers]) => this.http.httpRequest('DELETE', `${url}auth/tokens`, headers))
   }
 
   /**
@@ -175,17 +174,17 @@ export default class Keystone extends AbstractService {
    * @param {String} token The authorization token.
    * @returns {Promise.<T>} A promise which will resolve with information about the token.
    */
-  tokenInfo(token) {
+  tokenInfo (token) {
     return Promise
       .all([this.serviceEndpoint(), token])
       .then(([url, token]) => {
         return [url, {
           'X-Subject-Token': token,
           'X-Auth-Token': token
-        }];
+        }]
       })
       .then(([url, headers]) => this.http.httpRequest('GET', `${url}auth/tokens`, headers))
-      .then((response) => response.json());
+      .then((response) => response.json())
   }
 
   /**
@@ -194,11 +193,11 @@ export default class Keystone extends AbstractService {
    * @param {String} token The authorization token.
    * @returns {Promise.<T>} A promise which will resolve with the service catalog.
    */
-  catalogList(token = null) {
+  catalogList (token = null) {
     return this
       ._requestComponents(token)
       .then(([url, headers]) => this.http.httpRequest('GET', `${url}auth/catalog`, headers))
       .then((response) => response.json())
-      .then((body) => body.catalog);
+      .then((body) => body.catalog)
   }
 }

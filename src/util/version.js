@@ -19,14 +19,13 @@
  * comparable instance.
  */
 export default class Version {
-
   /**
    * The name of the service.
    *
    * @returns {String|*|null} The name of the service, or null.
    */
-  get service() {
-    return this._service || null;
+  get service () {
+    return this._service || null
   }
 
   /**
@@ -34,8 +33,8 @@ export default class Version {
    *
    * @returns {Number} The major version number
    */
-  get major() {
-    return this._major || 0;
+  get major () {
+    return this._major || 0
   }
 
   /**
@@ -43,8 +42,8 @@ export default class Version {
    *
    * @returns {Number} The minor version number
    */
-  get minor() {
-    return this._minor || 0;
+  get minor () {
+    return this._minor || 0
   }
 
   /**
@@ -52,8 +51,8 @@ export default class Version {
    *
    * @returns {Number} The patch version number.
    */
-  get patch() {
-    return this._patch || 0;
+  get patch () {
+    return this._patch || 0
   }
 
   /**
@@ -61,8 +60,8 @@ export default class Version {
    *
    * @returns {Object[]} The list of links.
    */
-  get links() {
-    return this._links || null;
+  get links () {
+    return this._links || null
   }
 
   /**
@@ -70,9 +69,9 @@ export default class Version {
    *
    * @param {Object[]} links The links to be set
    */
-  set links(links) {
+  set links (links) {
     if (Array.isArray(links)) {
-      this._links = links;
+      this._links = links
     }
   }
 
@@ -82,37 +81,37 @@ export default class Version {
    * @param {String} [service] The name of the service.
    * @param {String} versionString The version string for this service.
    */
-  constructor(service, versionString) {
+  constructor (service, versionString) {
     // Sanitize input
     if (typeof service !== 'string') {
-      service = undefined;
+      service = undefined
     }
     if (typeof versionString !== 'string') {
-      versionString = undefined;
+      versionString = undefined
     }
 
     if (versionString === undefined) {
-      versionString = service;
+      versionString = service
     } else {
-      this._service = service;
+      this._service = service
     }
 
     // Sanity check before running regex.
     if (!versionString || !versionString.match) {
-      return;
+      return
     }
 
-    const results = versionString.match(/^(([^ ]+) )?v?(([0-9]+)(\.([0-9]+)(.([0-9]+))?)?)$/);
+    const results = versionString.match(/^(([^ ]+) )?v?(([0-9]+)(\.([0-9]+)(.([0-9]+))?)?)$/)
     if (results) {
-      this._service = results[2] || this._service; // regex takes precedence
-      this._major = parseInt(results[4], 10);
-      this._minor = parseInt(results[6], 10);
-      this._patch = parseInt(results[8], 10);
+      this._service = results[2] || this._service // regex takes precedence
+      this._major = parseInt(results[4], 10)
+      this._minor = parseInt(results[6], 10)
+      this._patch = parseInt(results[8], 10)
     }
-    this._links = null;
+    this._links = null
 
-    this.equals = this.equals.bind(this);
-    this.supports = this.supports.bind(this);
+    this.equals = this.equals.bind(this)
+    this.supports = this.supports.bind(this)
   }
 
   /**
@@ -121,20 +120,20 @@ export default class Version {
    * @param {String|Version} version The version to compare to.
    * @returns {boolean} True if they are exactly the same, otherwise false.
    */
-  equals(version) {
+  equals (version) {
     if (!(version instanceof Version)) {
       // is it a parseable string?
       if (typeof version === 'string') {
-        version = new Version(version);
+        version = new Version(version)
       } else {
-        return false;
+        return false
       }
     }
 
     return version.major === this.major &&
       version.minor === this.minor &&
       version.patch === this.patch &&
-      version.service === this.service;
+      version.service === this.service
   }
 
   /**
@@ -144,30 +143,30 @@ export default class Version {
    * @param {String|Version} version the version to support.
    * @returns {boolean} True if the version is compatible, otherwise false
    */
-  supports(version) {
+  supports (version) {
     if (!(version instanceof Version)) {
       if (typeof version === 'string') {
-        version = new Version(version);
+        version = new Version(version)
       } else {
-        return false;
+        return false
       }
     }
 
     const compatibleVersion = version.service === this.service &&
       version.major === this.major &&
-      version.minor <= this.minor;
+      version.minor <= this.minor
 
     if (compatibleVersion && version.minor === this.minor) {
-      return version.patch <= this.patch;
+      return version.patch <= this.patch
     }
-    return compatibleVersion;
+    return compatibleVersion
   }
 
-  toString() {
-    let version = `${this.major}.${this.minor}`;
+  toString () {
+    let version = `${this.major}.${this.minor}`
     if (this.patch) {
-      version = `${version}.${this.patch}`;
+      version = `${version}.${this.patch}`
     }
-    return version;
+    return version
   }
 }

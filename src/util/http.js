@@ -14,8 +14,8 @@
  * under the License.
  */
 
-import 'isomorphic-fetch';
-import log from 'loglevel';
+import 'isomorphic-fetch'
+import log from 'loglevel'
 
 /**
  * This utility class provides an abstraction layer for HTTP calls via fetch(). Its purpose is
@@ -33,7 +33,6 @@ import log from 'loglevel';
  * - Other features.
  */
 export default class Http {
-
   /**
    * The default headers which will be sent with every request. A copy of these headers will be
    * added to the Request instance passed through the interceptor chain, and may be
@@ -41,18 +40,18 @@ export default class Http {
    *
    * @returns {{string: string}} A mapping of 'headerName': 'headerValue'
    */
-  get defaultHeaders() {
-    return this._defaultHeaders;
+  get defaultHeaders () {
+    return this._defaultHeaders
   }
 
   /**
    * Create a new HTTP handler.
    */
-  constructor() {
+  constructor () {
     // Add default response interceptors.
     this._defaultHeaders = {
       'Content-Type': 'application/json'
-    };
+    }
   }
 
   /**
@@ -64,40 +63,39 @@ export default class Http {
    * @param {{}} body The body. It will be JSON-Encoded by the handler.
    * @returns {Promise} A promise which will resolve with the processed request response.
    */
-  httpRequest(method, url, headers = {}, body) {
-
+  httpRequest (method, url, headers = {}, body) {
     // Sanitize the headers...
-    headers = Object.assign({}, headers, this.defaultHeaders);
+    headers = Object.assign({}, headers, this.defaultHeaders)
 
     // Build the request
-    const init = {method, headers};
+    const init = { method, headers }
 
     // The Request() constructor will throw an error if the method is GET/HEAD, and there's a body.
     if (['GET', 'HEAD'].indexOf(method) === -1 && body) {
-      init.body = JSON.stringify(body);
+      init.body = JSON.stringify(body)
     }
-    const request = new Request(url, init);
+    const request = new Request(url, init)
 
     // Build the wrapper promise.
     return new Promise((resolve, reject) => {
-      log.debug('-->', `HTTP ${method}`, url, JSON.stringify(headers), JSON.stringify(body));
-      let promise = fetch(request.url, init);
+      log.debug('-->', `HTTP ${method}`, url, JSON.stringify(headers), JSON.stringify(body))
+      const promise = fetch(request.url, init)
 
       // Fetch will treat all http responses (2xx, 3xx, 4xx, 5xx, etc) as successful responses.
       // This will catch all 4xx and 5xx responses and return them to the catch() handler. Note
       // that it's up to the downstream developer to determine whether what they received is an
       // error or a failed response.
       promise.then((response) => {
-        log.debug('<--', `HTTP ${response.status}`);
+        log.debug('<--', `HTTP ${response.status}`)
         if (response.status >= 400) {
-          return reject(response);
+          return reject(response)
         } else {
-          return response;
+          return response
         }
-      });
+      })
 
-      promise.then((response) => resolve(response), (error) => reject(error));
-    });
+      promise.then((response) => resolve(response), (error) => reject(error))
+    })
   }
 
   /**
@@ -106,8 +104,8 @@ export default class Http {
    * @param {String} url The request URL.
    * @returns {Promise} A promise which will resolve with the processed request response.
    */
-  httpGet(url) {
-    return this.httpRequest('GET', url, {}, null);
+  httpGet (url) {
+    return this.httpRequest('GET', url, {}, null)
   }
 
   /**
@@ -117,8 +115,8 @@ export default class Http {
    * @param {{}} body The body. It will be JSON-Encoded by the handler.
    * @returns {Promise} A promise which will resolve with the processed request response.
    */
-  httpPut(url, body) {
-    return this.httpRequest('PUT', url, {}, body);
+  httpPut (url, body) {
+    return this.httpRequest('PUT', url, {}, body)
   }
 
   /**
@@ -128,8 +126,8 @@ export default class Http {
    * @param {{}} body The body. It will be JSON-Encoded by the handler.
    * @returns {Promise} A promise which will resolve with the processed request response.
    */
-  httpPost(url, body) {
-    return this.httpRequest('POST', url, {}, body);
+  httpPost (url, body) {
+    return this.httpRequest('POST', url, {}, body)
   }
 
   /**
@@ -138,7 +136,7 @@ export default class Http {
    * @param {String} url The request URL.
    * @returns {Promise} A promise which will resolve with the processed request response.
    */
-  httpDelete(url) {
-    return this.httpRequest('DELETE', url, {}, null);
+  httpDelete (url) {
+    return this.httpRequest('DELETE', url, {}, null)
   }
 }

@@ -2,13 +2,16 @@
 - project:
     templates:
       - nodejs8-docs
-      - nodejs8-jobs
       - nodejs8-publish-to-npm
     check:
       jobs:
+        - nodejs-run-lint
+        - nodejs-run-test-browser
         - js-openstack-lib-unit-tests-nodejs12
     gate:
       jobs:
+        - nodejs-run-lint
+        - nodejs-run-test-browser
         - js-openstack-lib-unit-tests-nodejs12
     experimental:
       jobs:

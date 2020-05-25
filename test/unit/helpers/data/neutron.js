@@ -25,19 +25,19 @@
  * format but a subsection of service endpoint return by keystone's catalog.
  */
 const neutronConfig = {
-  region_id: "RegionOne",
-  url: "http://192.168.99.99:9696/",
-  region: "RegionOne",
-  interface: "public",
-  id: "0b8b5f0f14904136ab5a4f83f27ec49a"
-};
+  region_id: 'RegionOne',
+  url: 'http://192.168.99.99:9696/',
+  region: 'RegionOne',
+  interface: 'public',
+  id: '0b8b5f0f14904136ab5a4f83f27ec49a'
+}
 
 /**
  * Build a new FetchMock configuration for the root endpoint.
  *
  * @returns {{}} A full FetchMock configuration for Neutron's Root Resource.
  */
-function rootResponse() {
+function rootResponse () {
   return {
     method: 'GET',
     matcher: 'http://192.168.99.99:9696/',
@@ -55,10 +55,10 @@ function rootResponse() {
         }
       ]
     }
-  };
+  }
 }
 
-function networkList(token) {
+function networkList (token) {
   return {
     method: 'GET',
     matcher: 'http://192.168.99.99:9696/v2.0/networks',
@@ -103,11 +103,11 @@ function networkList(token) {
         }
       ]
     }
-  };
+  }
 }
 
 export {
   neutronConfig as config,
   rootResponse as root,
   networkList
-};
+}

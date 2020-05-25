@@ -14,66 +14,65 @@
  * under the License.
  */
 
-import Neutron from '../../src/neutron.js';
-import * as mockData from './helpers/data/neutron';
-import fetchMock from 'fetch-mock';
+import Neutron from '../../src/neutron.js'
+import * as mockData from './helpers/data/neutron'
+import fetchMock from 'fetch-mock'
 
 describe('neutron', () => {
-
-  afterEach(fetchMock.restore);
+  afterEach(fetchMock.restore)
 
   it('should export a class', () => {
-    const neutron = new Neutron(mockData.config);
-    expect(neutron).toBeDefined();
-  });
+    const neutron = new Neutron(mockData.config)
+    expect(neutron).toBeDefined()
+  })
 
   it('should throw an error for an empty config', () => {
     try {
-      const neutron = new Neutron();
-      neutron.versions();
+      const neutron = new Neutron()
+      neutron.versions()
     } catch (e) {
-      expect(e.message).toEqual('An endpoint configuration is required.');
+      expect(e.message).toEqual('An endpoint configuration is required.')
     }
-  });
+  })
 
-  describe("networkList()", () => {
-    let neutron = null;
+  describe('networkList()', () => {
+    let neutron = null
 
     beforeEach(() => {
-      fetchMock.mock(mockData.root());
-      neutron = new Neutron(mockData.config);
-    });
+      fetchMock.mock(mockData.root())
+      neutron = new Neutron(mockData.config)
+    })
 
-    it("should return the networks as an array.", (done) => {
-      const token = 'test_token';
+    it('should return the networks as an array.', (done) => {
+      const token = 'test_token'
 
-      fetchMock.mock(mockData.networkList(token));
+      fetchMock.mock(mockData.networkList(token))
       neutron
         .networkList(token)
         .then((networks) => {
-          expect(networks.length).toBe(2);
-          done();
+          expect(networks.length).toBe(2)
+          done()
         })
-        .catch((error) => done.fail(error));
-    });
+        .catch((error) => done.fail(error))
+    })
 
-    it("Should not cache its results", (done) => {
-      const token = 'test_token';
+    it('Should not cache its results', (done) => {
+      const token = 'test_token'
 
-      let mockOptions = mockData.networkList(token);
-      fetchMock.mock(mockOptions);
+      const mockOptions = mockData.networkList(token)
+      fetchMock.mock(mockOptions)
 
       neutron
         .networkList(token)
         .then(() => {
-          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(1);
-          return neutron.networkList(token);
+          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(1)
+          return neutron.networkList(token)
         })
         .then(() => {
-          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(2);
-          done();
+          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(2)
+          done()
         })
-        .catch((error) => done.fail(error));
-    });
-  });
-});
+        .catch((error) => done.fail(error))
+    })
+  })
+})

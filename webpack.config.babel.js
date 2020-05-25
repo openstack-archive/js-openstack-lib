@@ -1,6 +1,6 @@
-import path from 'path';
-import webpack from 'webpack';
-import cloudsYamlPath from './test/functional/helpers/cloudsYamlPath';
+import path from 'path'
+import webpack from 'webpack'
+import cloudsYamlPath from './test/functional/helpers/cloudsYamlPath'
 
 export default {
   entry: ['./src/index.js'],
@@ -23,13 +23,13 @@ export default {
           }
         }
       }
-    ],
+    ]
   },
   plugins: [
     new webpack.NormalModuleReplacementPlugin(/helpers\/cloudsConfig/,
       'json!yaml!' + cloudsYamlPath)
   ],
   node: {
-    fs: "empty"
+    fs: 'empty'
   }
-};
+}

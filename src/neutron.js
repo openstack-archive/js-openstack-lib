@@ -13,7 +13,7 @@
  * the License for the specific language governing permissions and limitations
  * under the License.
  */
-import AbstractService from './util/abstractService';
+import AbstractService from './util/abstractService'
 
 /**
  * A list of all supported versions. Please keep this array sorted by most recent.
@@ -23,10 +23,9 @@ import AbstractService from './util/abstractService';
  */
 const supportedNeutronVersions = [
   'v2.0'
-];
+]
 
 export default class Neutron extends AbstractService {
-
   /**
    * This class provides direct, idempotent, low-level access to the Neutron API of a specific
    * cloud. The constructor requires that you provide a specific neutron interface endpoint
@@ -42,16 +41,16 @@ export default class Neutron extends AbstractService {
    * }
    * @param {{}} endpointConfig The configuration element for a specific glance endpoint.
    */
-  constructor(endpointConfig) {
+  constructor (endpointConfig) {
     // Sanity checks.
     if (!endpointConfig || !endpointConfig.url) {
-      throw new Error('An endpoint configuration is required.');
+      throw new Error('An endpoint configuration is required.')
     }
     // Clone the config, so that this instance is immutable
     // at runtime (no modifying the config after the fact).
-    endpointConfig = Object.assign({}, endpointConfig);
+    endpointConfig = Object.assign({}, endpointConfig)
 
-    super(endpointConfig.url, supportedNeutronVersions);
+    super(endpointConfig.url, supportedNeutronVersions)
   }
 
   /**
@@ -60,11 +59,11 @@ export default class Neutron extends AbstractService {
    * @param {String} token An authorization token, or a promise which will resolve into one.
    * @returns {Promise.<T>} A promise which will resolve with the list of networks.
    */
-  networkList(token = null) {
+  networkList (token = null) {
     return this
       ._requestComponents(token)
       .then(([url, headers]) => this.http.httpRequest('GET', `${url}/networks`, headers))
       .then((response) => response.json())
-      .then((body) => body.networks);
+      .then((body) => body.networks)
   }
 }

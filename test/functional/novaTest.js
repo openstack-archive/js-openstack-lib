@@ -14,56 +14,55 @@
  * limitations under the License.
  */
 
-import config from "./helpers/cloudsConfig";
-import Version from '../../src/util/version';
-import Nova from "../../src/nova";
-import Keystone from "../../src/keystone";
-import log from 'loglevel';
+import config from './helpers/cloudsConfig'
+import Version from '../../src/util/version'
+import Nova from '../../src/nova'
+import Keystone from '../../src/keystone'
+import log from 'loglevel'
 
-log.setLevel("DEBUG");
+log.setLevel('DEBUG')
 
-describe("Nova", () => {
+describe('Nova', () => {
   // Create a keystone instance and extract the nova API endpoint.
-  let devstackConfig = config.clouds.devstack;
-  let keystone = new Keystone(devstackConfig);
-  let tokenPromise = keystone.tokenIssue();
+  const devstackConfig = config.clouds.devstack
+  const keystone = new Keystone(devstackConfig)
+  const tokenPromise = keystone.tokenIssue()
 
-  let configPromise = tokenPromise
+  const configPromise = tokenPromise
     .then((token) => keystone.catalogList(token))
     .then((catalog) => catalog.find((entry) => entry.name === 'nova'))
-    .then((entry) => entry.endpoints.find((endpoint) => endpoint.interface === 'public'));
+    .then((entry) => entry.endpoints.find((endpoint) => endpoint.interface === 'public'))
 
-  describe("version()", () => {
+  describe('version()', () => {
     /**
      * This test acts as a canary, to inform the SDK developers that the Nova API
      * has changed in a significant way.
      */
-    it("should return a supported version.", (done) => {
+    it('should return a supported version.', (done) => {
       configPromise
         .then((config) => new Nova(config))
         .then((nova) => nova.version())
         .then((apiVersion) => {
-          expect(apiVersion instanceof Version).not.toBeFalsy();
-          done();
+          expect(apiVersion instanceof Version).not.toBeFalsy()
+          done()
         })
-        .catch((error) => done.fail(error));
-    });
-  });
+        .catch((error) => done.fail(error))
+    })
+  })
 
-  describe("flavorList()", () => {
-
+  describe('flavorList()', () => {
     /**
      * Assert that we can get a list of flavors.
      */
-    it("should return a list of flavors.", (done) => {
+    it('should return a list of flavors.', (done) => {
       configPromise
         .then((config) => new Nova(config))
         .then((nova) => nova.flavorList(tokenPromise))
         .then((flavors) => {
-          expect(flavors.length > 0).toBeTruthy();
-          done();
+          expect(flavors.length > 0).toBeTruthy()
+          done()
         })
-        .catch((error) => done.fail(error));
-    });
-  });
-});
+        .catch((error) => done.fail(error))
+    })
+  })
+})

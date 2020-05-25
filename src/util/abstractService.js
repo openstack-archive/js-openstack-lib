@@ -14,12 +14,11 @@
  * under the License.
  */
 
-import Http from './http';
-import Version from './version';
-import URL from 'url-parse';
+import Http from './http'
+import Version from './version'
+import URL from 'url-parse'
 
 export default class AbstractService {
-
   /**
    * This class provides an abstract implementation of our services, which includes logic common to
    * all of our services.
@@ -27,9 +26,9 @@ export default class AbstractService {
    * @param {string} endpointUrl The endpoint URL.
    * @param {Array} supportedVersions The list of all supported versions.
    */
-  constructor(endpointUrl, supportedVersions) {
-    this._endpointUrl = endpointUrl;
-    this._supportedVersions = supportedVersions;
+  constructor (endpointUrl, supportedVersions) {
+    this._endpointUrl = endpointUrl
+    this._supportedVersions = supportedVersions
   }
 
   /**
@@ -37,11 +36,11 @@ export default class AbstractService {
    *
    * @returns {Http} Our HTTP service instance.
    */
-  get http() {
+  get http () {
     if (!this._http) {
-      this._http = new Http();
+      this._http = new Http()
     }
-    return this._http;
+    return this._http
   }
 
   /**
@@ -49,8 +48,8 @@ export default class AbstractService {
    *
    * @returns {Array} The list of all supported versions, or empty array.
    */
-  get supportedVersions() {
-    return this._supportedVersions || [];
+  get supportedVersions () {
+    return this._supportedVersions || []
   }
 
   /**
@@ -58,8 +57,8 @@ export default class AbstractService {
    *
    * @returns {string} The URL of our service.
    */
-  get endpointUrl() {
-    return this._endpointUrl;
+  get endpointUrl () {
+    return this._endpointUrl
   }
 
   /**
@@ -67,14 +66,14 @@ export default class AbstractService {
    *
    * @returns {Promise.<Version[]>} A promise that will resolve with the list of API versions.
    */
-  versions() {
+  versions () {
     return this._rawVersions().then((versions) => {
       return versions.map((rawVersion) => {
-        const version = new Version(rawVersion.id);
-        version.links = rawVersion.links;
-        return version;
-      });
-    });
+        const version = new Version(rawVersion.id)
+        version.links = rawVersion.links
+        return version
+      })
+    })
   }
 
   /**
@@ -83,26 +82,26 @@ export default class AbstractService {
    * @returns {Promise.<Object[]>} A promise that will resolve with the list of raw versions.
    * @protected
    */
-  _rawVersions() {
+  _rawVersions () {
     return new Promise((resolve, reject) => {
       this.http
         .httpGet(this._endpointUrl)
         .catch((response) => {
           if (response.status === 401) {
-            let rootUrl = new URL(this._endpointUrl);
-            rootUrl.set('pathname', '/');
-            rootUrl.set('query', '');
-            rootUrl.set('hash', '');
+            const rootUrl = new URL(this._endpointUrl)
+            rootUrl.set('pathname', '/')
+            rootUrl.set('query', '')
+            rootUrl.set('hash', '')
 
-            return this.http.httpGet(rootUrl.href);
+            return this.http.httpGet(rootUrl.href)
           } else {
-            throw response;
+            throw response
           }
         })
         .then((response) => response.json())
         .then((body) => resolve(body.versions))
-        .catch(reject);
-    });
+        .catch(reject)
+    })
   }
 
   /**
@@ -110,17 +109,17 @@ export default class AbstractService {
    *
    * @returns {Promise.<Version>} A promise that will resolve with the specific API version.
    */
-  version() {
+  version () {
     return this
       .versions()
       .then((versions) => {
-        for (let version of versions) {
+        for (const version of versions) {
           if (this.supportedVersions.find(version.supports)) {
-            return version;
+            return version
           }
         }
-        throw new Error("No supported API version available.");
-      });
+        throw new Error('No supported API version available.')
+      })
   }
 
   /**
@@ -128,22 +127,22 @@ export default class AbstractService {
    *
    * @returns {Promise.<T>|*} A promise which will resolve with the endpoint URL string.
    */
-  serviceEndpoint() {
+  serviceEndpoint () {
     if (!this._endpointPromise) {
       this._endpointPromise = this.version()
         .then((version) => {
           if (version.links) {
             for (let i = 0; i < version.links.length; i++) {
-              let link = version.links[i];
+              const link = version.links[i]
               if (link.rel === 'self' && link.href) {
-                return link.href;
+                return link.href
               }
             }
           }
-          throw new Error("No service endpoint discovered.");
-        });
+          throw new Error('No service endpoint discovered.')
+        })
     }
-    return this._endpointPromise;
+    return this._endpointPromise
   }
 
   /**
@@ -155,18 +154,18 @@ export default class AbstractService {
    * @returns {Promise} A promise which resolves with [url, token].
    * @private
    */
-  _requestComponents(token = null) {
+  _requestComponents (token = null) {
     // Make sure the token is a promise.
-    let headerPromise = Promise
+    const headerPromise = Promise
       .resolve(token)
       .then((token) => {
         if (token) {
           return {
             'X-Auth-Token': token
-          };
+          }
         }
-        return {};
-      });
-    return Promise.all([this.serviceEndpoint(), headerPromise]);
+        return {}
+      })
+    return Promise.all([this.serviceEndpoint(), headerPromise])
   }
 }

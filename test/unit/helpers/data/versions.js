@@ -22,8 +22,8 @@
 /**
  * URLs to match the test data below.
  */
-const rootUrl = "http://example.com/";
-const subUrl = `${rootUrl}v1`;
+const rootUrl = 'http://example.com/'
+const subUrl = `${rootUrl}v1`
 
 /**
  * A mock list of supported versions for the below requests.
@@ -32,72 +32,72 @@ const subUrl = `${rootUrl}v1`;
  */
 const versions = [
   'v2.3'
-];
+]
 
 /**
  * Build a new FetchMock configuration for the versions (root) endpoint.
  *
  * @returns {{}} A full FetchMock configuration for a versions resource.
  */
-function rootResponse() {
+function rootResponse () {
   return {
     method: 'GET',
     matcher: rootUrl,
     response: {
       versions: [
         {
-          status: "CURRENT",
-          id: "v2.3",
+          status: 'CURRENT',
+          id: 'v2.3',
           links: [
             {
               href: `${rootUrl}v2/`,
-              rel: "self"
+              rel: 'self'
             }
           ]
         },
         {
-          status: "SUPPORTED",
-          id: "v2.2",
+          status: 'SUPPORTED',
+          id: 'v2.2',
           links: [
             {
               href: `${rootUrl}v2/`,
-              rel: "self"
+              rel: 'self'
             }
           ]
         },
         {
-          status: "SUPPORTED",
-          id: "v2.1",
+          status: 'SUPPORTED',
+          id: 'v2.1',
           links: [
             {
               href: `${rootUrl}v2/`,
-              rel: "self"
+              rel: 'self'
             }
           ]
         },
         {
-          status: "SUPPORTED",
-          id: "v1.1",
+          status: 'SUPPORTED',
+          id: 'v1.1',
           links: [
             {
               href: `${rootUrl}v1/`,
-              rel: "self"
+              rel: 'self'
             }
           ]
         },
         {
-          status: "SUPPORTED",
-          id: "v1.0",
+          status: 'SUPPORTED',
+          id: 'v1.0',
           links: [
             {
               href: `${rootUrl}v1/`,
-              rel: "self"
+              rel: 'self'
             }
           ]
         }
       ]
     }
-  };
+  }
 }
 
 /**
@@ -106,14 +106,14 @@ function rootResponse() {
  * @param {int} httpStatus The HTTP status for the response.
  * @returns {{}} A full FetchMock configuration a failing request..
  */
-function subResponse(httpStatus = 401) {
+function subResponse (httpStatus = 401) {
   return {
     method: 'GET',
     matcher: subUrl,
     response: {
       status: httpStatus
     }
-  };
+  }
 }
 
 export {
@@ -122,4 +122,4 @@ export {
   versions,
   rootResponse,
   subResponse
-};
+}

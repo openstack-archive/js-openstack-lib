@@ -14,62 +14,61 @@
  * limitations under the License.
  */
 
-import Nova from "../../src/nova.js";
-import * as mockData from "./helpers/data/nova";
-import fetchMock from "fetch-mock";
+import Nova from '../../src/nova.js'
+import * as mockData from './helpers/data/nova'
+import fetchMock from 'fetch-mock'
 
 describe('Nova', () => {
-
-  afterEach(fetchMock.restore);
+  afterEach(fetchMock.restore)
 
   it('should export a class', () => {
-    const nova = new Nova(mockData.config);
-    expect(nova).toBeDefined();
-  });
+    const nova = new Nova(mockData.config)
+    expect(nova).toBeDefined()
+  })
 
   it('should throw an error for an empty config', () => {
-    expect(() => new Nova(null)).toThrow();
-  });
+    expect(() => new Nova(null)).toThrow()
+  })
 
-  describe("flavorList()", () => {
-    let nova = null;
+  describe('flavorList()', () => {
+    let nova = null
 
     beforeEach(() => {
-      fetchMock.mock(mockData.rootVersion());
-      fetchMock.mock(mockData.root());
-      nova = new Nova(mockData.config);
-    });
+      fetchMock.mock(mockData.rootVersion())
+      fetchMock.mock(mockData.root())
+      nova = new Nova(mockData.config)
+    })
 
-    it("should return the flavors as an array.", (done) => {
-      const token = 'test_token';
+    it('should return the flavors as an array.', (done) => {
+      const token = 'test_token'
 
-      fetchMock.mock(mockData.flavorList(token));
+      fetchMock.mock(mockData.flavorList(token))
       nova
         .flavorList(token)
         .then((images) => {
-          expect(images.length).not.toBe(0);
-          done();
+          expect(images.length).not.toBe(0)
+          done()
         })
-        .catch((error) => done.fail(error));
-    });
+        .catch((error) => done.fail(error))
+    })
 
-    it("Should not cache its results", (done) => {
-      const token = 'test_token';
+    it('Should not cache its results', (done) => {
+      const token = 'test_token'
 
-      let mockOptions = mockData.flavorList(token);
-      fetchMock.mock(mockOptions);
+      const mockOptions = mockData.flavorList(token)
+      fetchMock.mock(mockOptions)
 
       nova
         .flavorList(token)
         .then(() => {
-          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(1);
-          return nova.flavorList(token);
+          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(1)
+          return nova.flavorList(token)
         })
         .then(() => {
-          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(2);
-          done();
+          expect(fetchMock.calls(mockOptions.matcher).length).toEqual(2)
+          done()
         })
-        .catch((error) => done.fail(error));
-    });
-  });
-});
+        .catch((error) => done.fail(error))
+    })
+  })
+})

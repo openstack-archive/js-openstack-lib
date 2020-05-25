@@ -14,71 +14,69 @@
  * under the License.
  */
 
-import config from "./helpers/cloudsConfig";
-import Version from '../../src/util/version';
-import Glance from "../../src/glance";
-import Keystone from "../../src/keystone";
-import log from 'loglevel';
+import config from './helpers/cloudsConfig'
+import Version from '../../src/util/version'
+import Glance from '../../src/glance'
+import Keystone from '../../src/keystone'
+import log from 'loglevel'
 
-log.setLevel("DEBUG");
+log.setLevel('DEBUG')
 
-describe("Glance", () => {
+describe('Glance', () => {
   // Create a keystone instance and extract the glance API endpoint.
-  let devstackConfig = config.clouds.devstack;
-  let keystone = new Keystone(devstackConfig);
-  let tokenPromise = keystone.tokenIssue();
+  const devstackConfig = config.clouds.devstack
+  const keystone = new Keystone(devstackConfig)
+  const tokenPromise = keystone.tokenIssue()
 
-  let configPromise = tokenPromise
+  const configPromise = tokenPromise
     .then((token) => keystone.catalogList(token))
     .then((catalog) => catalog.find((entry) => entry.name === 'glance'))
-    .then((entry) => entry.endpoints.find((endpoint) => endpoint.interface === 'public'));
+    .then((entry) => entry.endpoints.find((endpoint) => endpoint.interface === 'public'))
 
-  describe("versions()", () => {
-    it("should return a list of all versions available on this clouds' glance", (done) => {
+  describe('versions()', () => {
+    it('should return a list of all versions available on this clouds\' glance', (done) => {
       configPromise
         .then((config) => new Glance(config))
         .then((glance) => glance.versions())
         .then((versions) => {
           // Quick sanity check.
-          expect(versions.length > 0).toBeTruthy();
-          done();
+          expect(versions.length > 0).toBeTruthy()
+          done()
         })
-        .catch((error) => done.fail(error));
-    });
-  });
+        .catch((error) => done.fail(error))
+    })
+  })
 
-  describe("version()", () => {
+  describe('version()', () => {
     /**
      * This test acts as a canary, to inform the SDK developers that the Glance API
      * has changed in a significant way.
      */
-    it("should return a supported version.", (done) => {
+    it('should return a supported version.', (done) => {
       configPromise
         .then((config) => new Glance(config))
         .then((glance) => glance.version())
         .then((apiVersion) => {
-          expect(apiVersion instanceof Version).not.toBeFalsy();
-          done();
+          expect(apiVersion instanceof Version).not.toBeFalsy()
+          done()
         })
-        .catch((error) => done.fail(error));
-    });
-  });
+        .catch((error) => done.fail(error))
+    })
+  })
 
-  describe("imageList()", () => {
-
+  describe('imageList()', () => {
     /**
      * Assert that we can get a list of images.
      */
-    it("should return a supported version.", (done) => {
+    it('should return a supported version.', (done) => {
       configPromise
         .then((config) => new Glance(config))
         .then((glance) => glance.imageList(tokenPromise))
         .then((images) => {
-          expect(images.length > 0).toBeTruthy();
-          done();
+          expect(images.length > 0).toBeTruthy()
+          done()
         })
-        .catch((error) => done.fail(error));
-    });
-  });
-
-});
+        .catch((error) => done.fail(error))
+    })
+  })
+})

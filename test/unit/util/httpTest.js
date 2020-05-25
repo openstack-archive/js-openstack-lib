@@ -14,122 +14,122 @@
  * under the License.
  */
 
-import Http from '../../../src/util/http.js';
-import fetchMock from 'fetch-mock';
+import Http from '../../../src/util/http.js'
+import fetchMock from 'fetch-mock'
 
 describe('Http', () => {
-  let http;
-  const testUrl = 'https://example.com/';
-  const testRequest = {lol: 'cat'};
-  const testResponse = {foo: 'bar'};
+  let http
+  const testUrl = 'https://example.com/'
+  const testRequest = { lol: 'cat' }
+  const testResponse = { foo: 'bar' }
 
   beforeEach(() => {
-    http = new Http();
-  });
+    http = new Http()
+  })
 
-  afterEach(fetchMock.restore);
+  afterEach(fetchMock.restore)
 
-  it("should permit manually constructing requests", (done) => {
-    fetchMock.get(testUrl, testResponse);
+  it('should permit manually constructing requests', (done) => {
+    fetchMock.get(testUrl, testResponse)
 
     http.httpRequest('GET', testUrl)
       .then((response) => response.json())
       .then((body) => {
-        expect(fetchMock.called(testUrl)).toBe(true);
-        expect(body).toEqual(testResponse);
-        done();
+        expect(fetchMock.called(testUrl)).toBe(true)
+        expect(body).toEqual(testResponse)
+        done()
       })
-      .catch((error) => done.fail(error));
-  });
+      .catch((error) => done.fail(error))
+  })
 
-  it("should make GET requests", (done) => {
-    fetchMock.get(testUrl, testResponse);
+  it('should make GET requests', (done) => {
+    fetchMock.get(testUrl, testResponse)
 
     http.httpGet(testUrl)
       .then((response) => response.json())
       .then((body) => {
-        expect(fetchMock.called(testUrl)).toBe(true);
-        expect(body).toEqual(testResponse);
-        done();
+        expect(fetchMock.called(testUrl)).toBe(true)
+        expect(body).toEqual(testResponse)
+        done()
       })
-      .catch((error) => done.fail(error));
-  });
+      .catch((error) => done.fail(error))
+  })
 
-  it("should make PUT requests", (done) => {
-    fetchMock.put(testUrl, testResponse, testRequest);
+  it('should make PUT requests', (done) => {
+    fetchMock.put(testUrl, testResponse, testRequest)
 
     http.httpPut(testUrl, testRequest)
       .then((response) => response.json())
       .then((body) => {
-        expect(fetchMock.called(testUrl)).toEqual(true);
-        expect(body).toEqual(testResponse);
-        done();
+        expect(fetchMock.called(testUrl)).toEqual(true)
+        expect(body).toEqual(testResponse)
+        done()
       })
-      .catch((error) => done.fail(error));
-  });
+      .catch((error) => done.fail(error))
+  })
 
-  it("should make POST requests", (done) => {
-    fetchMock.post(testUrl, testResponse, testRequest);
+  it('should make POST requests', (done) => {
+    fetchMock.post(testUrl, testResponse, testRequest)
 
     http.httpPost(testUrl, testRequest)
       .then((response) => response.json())
       .then((body) => {
-        expect(fetchMock.called(testUrl)).toEqual(true);
-        expect(body).toEqual(testResponse);
-        done();
+        expect(fetchMock.called(testUrl)).toEqual(true)
+        expect(body).toEqual(testResponse)
+        done()
       })
-      .catch((error) => done.fail(error));
-  });
+      .catch((error) => done.fail(error))
+  })
 
-  it("should make DELETE requests", (done) => {
-    fetchMock.delete(testUrl, testRequest);
+  it('should make DELETE requests', (done) => {
+    fetchMock.delete(testUrl, testRequest)
 
     http.httpDelete(testUrl, testRequest)
       .then(() => {
-        expect(fetchMock.called(testUrl)).toEqual(true);
-        done();
+        expect(fetchMock.called(testUrl)).toEqual(true)
+        done()
       })
-      .catch((error) => done.fail(error));
-  });
+      .catch((error) => done.fail(error))
+  })
 
-  it("should permit setting default headers", (done) => {
-    http.defaultHeaders['Custom-Header'] = 'Custom-Value';
-    fetchMock.get(testUrl, testResponse);
+  it('should permit setting default headers', (done) => {
+    http.defaultHeaders['Custom-Header'] = 'Custom-Value'
+    fetchMock.get(testUrl, testResponse)
 
     http.httpGet(testUrl)
       .then(() => {
-        let headers = fetchMock.lastOptions().headers;
-        expect(headers['Custom-Header']).toEqual('Custom-Value');
-        done();
+        const headers = fetchMock.lastOptions().headers
+        expect(headers['Custom-Header']).toEqual('Custom-Value')
+        done()
       })
-      .catch((error) => done.fail(error));
-  });
+      .catch((error) => done.fail(error))
+  })
 
-  it("should pass exceptions back to the invoker", (done) => {
+  it('should pass exceptions back to the invoker', (done) => {
     fetchMock.get(testUrl, () => {
-      throw new TypeError(); // Example- net::ERR_NAME_NOT_RESOLVED
-    });
+      throw new TypeError() // Example- net::ERR_NAME_NOT_RESOLVED
+    })
 
     http.httpGet(testUrl)
       .then((response) => done.fail(response))
       .catch((error) => {
-        expect(error.stack).toBeDefined();
-        done();
-      });
-  });
+        expect(error.stack).toBeDefined()
+        done()
+      })
+  })
 
-  it("should pass failed requests to the catch block.", (done) => {
-    fetchMock.get(testUrl, {status: 500, body: testResponse});
+  it('should pass failed requests to the catch block.', (done) => {
+    fetchMock.get(testUrl, { status: 500, body: testResponse })
 
     http.httpGet(testUrl)
       .then((response) => done.fail(response))
       .catch((response) => {
-        expect(response.status).toBe(500);
-        done();
-      });
-  });
+        expect(response.status).toBe(500)
+        done()
+      })
+  })
 
-  it("should not interfere with mocks that have matching headers.", (done) => {
+  it('should not interfere with mocks that have matching headers.', (done) => {
     fetchMock.mock({
       method: 'GET',
       matcher: testUrl,
@@ -137,11 +137,11 @@ describe('Http', () => {
         'Content-Type': 'application/json'
       },
       response: testResponse
-    });
+    })
 
     http
-      .httpRequest('GET', testUrl, {'Content-Type': 'application/json'})
+      .httpRequest('GET', testUrl, { 'Content-Type': 'application/json' })
       .then(() => done())
-      .catch((error) => done.fail(error));
-  });
-});
+      .catch((error) => done.fail(error))
+  })
+})
