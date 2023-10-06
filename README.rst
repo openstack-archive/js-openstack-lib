@@ -1,67 +1,14 @@
-========================
-Team and repository tags
-========================
+This project is no longer maintained.
 
-.. image:: http://governance.openstack.org/badges/js-openstack-lib.svg
-    :target: http://governance.openstack.org/reference/tags/index.html
+The contents of this repository are still available in the Git
+source code management system. To see the contents of this
+repository before it reached its end of life, please check out the
+previous commit with "git checkout HEAD^1".
 
-.. Change things from this point on
+(Optional:)
+For an alternative project, please see <alternative project name> at
+<alternative project URL>.
 
-JS-OpenStack-lib
-================
-
-JS-OpenStack-lib is a Javascript library for interacting with OpenStack clouds. The project aims to provide a consistent and complete set of interactions with OpenStack's many services, along with documentations, examples, and tools.
-This library is compatible with both browser and server side Javascript.
-
-Example
--------
-
-The following example simply connects to an OpenStack cloud and list flavors in the Compute service:
-
-::
-
-   import OpenStack from 'js-openstack-lib';
-
-   // Initialize cloud
-   // cloudConfig is a JSON object corresponding to clouds.yaml
-   // (It is your responsibility to load and parse it)
-   const openStack = new OpenStack({
-     region_name: 'Region1',
-     auth: {
-       username: 'user',
-       password: 'pass',
-       project_name: 'js-openstack-lib',
-       auth_url: 'http://192.168.99.99/'
-     }
-   });
-   // List all flavors
-   openStack.networkList()
-     .then((networks) => {
-       console.log(networks);
-     });
-
-Documentation
--------------
-
-Coming soon
-
-Contributing
-------------
-
-If you're interested in contributing, the following will help you get started:
-
-:Bug Tracker: https://storyboard.openstack.org/#!/project/844
-:Code Hosting: https://git.openstack.org/cgit/openstack/js-openstack-lib
-:Code Review:
-    https://review.openstack.org/#/q/status:open+project:openstack/js-openstack-lib,n,z
-
-    Please read `Developer's Guide <http://docs.openstack.org/infra/manual/developers.html>`_ before sending your first patch for review
-
-
-
-License
--------
-
-Apache 2.0
-
-
+For any further questions, please email
+openstack-discuss@lists.openstack.org or join #openstack-dev on
+OFTC.
